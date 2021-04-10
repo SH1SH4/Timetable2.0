@@ -1,5 +1,6 @@
 from flask import Flask
-from data import db_session
+from flask_wtf import FlaskForm
+from tables import db_session
 from flask_restful import Api
 
 app = Flask(__name__)
