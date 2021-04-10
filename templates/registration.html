@@ -11,22 +11,26 @@
     <title>Авторизация</title>
   </head>
   <body>
-    <p class="fs-1">Авторизация</p>
+    <p class="fs-1">Регистрация</p>
     <form method="post" class="auto_form">
-          <div class="mb-3 row">
-            <label for="Email" class="col-sm-2 col-form-label">Email</label>
-            <div class="col-sm-10">
-                <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email">
-            </div>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Введите свой Email</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" name="email">
           </div>
-        <div class="mb-3 row">
-            <label for="Password" class="col-sm-2 col-form-label">Пароль</label>
+        <div class="mb-3">
+            <label for="Password" class="form-label">Придумайте пароль</label>
             <div class="col-sm-10">
-              <input type="password" class="form-control" id="password" name="password">
+              <input type="password" class="form-control" id="inputPassword" name="password">
             </div>
         </div>
+        <div class="mb-3">
+            <input type="surname" class="form-control" id="surname" placeholder="Введите свою фамилию" name="surname">
+        </div>
+        <div class="mb-3">
+            <input type="name" class="form-control" id="name" placeholder="Введите своё имя" name="name">
+        </div>
         <div class="button_post">
-            <button type="submit" class="btn btn-dark">Вход</button>
+            <button type="submit" class="btn btn-dark">Зарегистрироваться</button>
         </div>
 
     </form>
