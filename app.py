@@ -17,7 +17,7 @@ def registration():
 @app.route("/authorization", methods=["POST", "GET"])
 def authorization():
     if request.method == "GET":
-        return render_template('registration.html')
+        return render_template('authorization.html')
     if request.method == "POST":
         print(request.form.get('password'))
         print(request.form.get('email'))
