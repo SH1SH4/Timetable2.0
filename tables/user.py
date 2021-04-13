@@ -7,10 +7,12 @@ from .db_session import SqlAlchemyBase
 class User(SqlAlchemyBase):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True, unique=True)
-    mail = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    surname = Column(String, nullable=False)
+    email = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    table = relationship("homework")
+    table = relationship("Tables")
 
 
 class Tables(SqlAlchemyBase):

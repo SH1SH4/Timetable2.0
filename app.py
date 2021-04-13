@@ -1,5 +1,13 @@
 from flask import Flask, render_template, url_for, request
+from modules.registration import reg
+from modules.login import login
+from tables import db_session
 app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    return render_template('main.html')
 
 
 @app.route('/registration', methods=["POST", "GET"])
@@ -7,22 +15,21 @@ def registration():
     if request.method == "GET":
         return render_template('registration.html')
     if request.method == "POST":
-        print(request.form.get('password'))
-        print(request.form.get('email'))
-        print(request.form.get('name'))
-        print(request.form.get('surname'))
+        form = request.form.to_dict()
+        reg(**form)
         return "OK"
 
 
-@app.route("/authorization", methods=["POST", "GET"])
+@app.route("/login", methods=["POST", "GET"])
 def authorization():
     if request.method == "GET":
         return render_template('authorization.html')
     if request.method == "POST":
-        print(request.form.get('password'))
-        print(request.form.get('email'))
-        return "OK"
+        if login(request.form.get('email'), request.form.get('password')):
+            return "OK"
+        return "NOT OK"
 
 
 if __name__ == "__main__":
+    db_session.global_init('db/db.db')
     app.run()
