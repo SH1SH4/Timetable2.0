@@ -30,16 +30,6 @@ def authorization():
         return "NOT OK"
 
 
-@app.route('/admin', methods=["POST", "GET"])
-def admin_authorization():
-    if request.method == "GET":
-        return render_template('authorization.html')
-    if request.method == "POST":
-        print(request.form.get('password'))
-        print(request.form.get('email'))
-        return "OK"
-
-
 @app.route('/timetable', methods=["POST", "GET"])
 def timetable():
     if request.method == "GET":
