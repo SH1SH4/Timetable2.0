@@ -24,5 +24,25 @@ def authorization():
         return "OK"
 
 
+@app.route('/admin', methods=["POST", "GET"])
+def admin_authorization():
+    if request.method == "GET":
+        return render_template('authorization.html')
+    if request.method == "POST":
+        print(request.form.get('password'))
+        print(request.form.get('email'))
+        return "OK"
+
+
+@app.route('/timetable', methods=["POST", "GET"])
+def timetable():
+    if request.method == "GET":
+        print(1)
+        return render_template('authorization.html')
+    if request.method == "POST":
+        print(2)
+        return '2'
+
+
 if __name__ == "__main__":
     app.run()
