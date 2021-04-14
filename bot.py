@@ -53,6 +53,7 @@ def connection(name):
     db_sess = db_session.create_session()
     for user in db_sess.query(User).filter(User.connection == str(name)):
         if user.connection == str(name):
+            db_sess.close()
             return True
         return False
 
@@ -63,6 +64,7 @@ def user_bot(text, user_name):
         if user.token == text:
             user.connection = user_name
             db_sess.commit()
+            db_sess.close()
             return True
         return False
 
