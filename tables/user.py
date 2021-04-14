@@ -12,6 +12,8 @@ class User(SqlAlchemyBase):
     surname = Column(String, nullable=False)
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
+    token = Column(String, nullable=False)
+    connection = Column(String, nullable=True)
     table = relationship("Tables")
 
 

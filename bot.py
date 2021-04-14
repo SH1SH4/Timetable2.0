@@ -16,8 +16,7 @@ import logging
 from tables import db_session
 from tables.user import User
 
-
-AUTORIZATION, TRY = range(2)
+AUTORIZATION, TRY_LOGIN = range(2)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -29,31 +28,47 @@ markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyb
 
 
 def start(update, context):
-    user_name = update.message.chat.first_name
+    user_name = update.message.chat.id
     print(user_name)
-    if user(user_name):
+    if connection(user_name):
         update.message.reply_text('Выберите действие, для продолжения работы', reply_markup=markup)
     else:
         update.message.reply_text("Пришлите токен для входа в аккаунт")
-        while True:
-            text = update.message.text
-            if user(text):
-                return AUTORIZATION
-            else:
-                update.message.reply_text("Ты позер, попробуй ещё раз!")
+        return TRY_LOGIN
 
 
-def user(text):
-    db_session.global_init(f"db/db.db")
+def try_login(update, context):
+    user_name = update.message.chat.id
+    text = update.message.text
+    answer = user_bot(text, user_name)
+    if answer:
+        print("OK")
+        update.message.reply_text('Выберите действие, для продолжения работы', reply_markup=markup)
+    else:
+        update.message.reply_text("Токен неверный, повторите попытку")
+        return TRY_LOGIN
+
+
+def connection(name):
     db_sess = db_session.create_session()
-    if text == db_sess.query(User).filter(User.name == text):
-        return True
-    return False
+    for user in db_sess.query(User).filter(User.connection == str(name)):
+        if user.connection == str(name):
+            return True
+        return False
+
+
+def user_bot(text, user_name):
+    db_sess = db_session.create_session()
+    for user in db_sess.query(User).filter(User.token == str(text)):
+        if user.token == text:
+            user.connection = user_name
+            db_sess.commit()
+            return True
+        return False
 
 
 def authorization(update, context):
     update.message.reply_text("Регистрация пройдена успешно")
-    update.message.reply_text('Выберите действие, для продолжения работы', reply_markup=markup)
 
 
 def stop(update, context):
@@ -109,7 +124,9 @@ def main():
 
         states={
             # Добавили user_data для сохранения ответа.
-            AUTORIZATION: [MessageHandler(Filters.text, authorization, pass_user_data=True)]},
+            AUTORIZATION: [MessageHandler(Filters.text, authorization, pass_user_data=True)],
+            TRY_LOGIN: [MessageHandler(Filters.text, try_login, pass_user_data=True)]},
+
 
         fallbacks=[MessageHandler(Filters.regex("^Stop&"), stop)]
     )
@@ -129,4 +146,5 @@ def main():
 
 
 if __name__ == '__main__':
+    db_session.global_init(f"db/db.db")
     main()
