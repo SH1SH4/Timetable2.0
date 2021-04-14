@@ -35,6 +35,24 @@ var FullCalendar = (function (exports) {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     }
 
+    import { Calendar } from '@fullcalendar/core';
+    import dayGridPlugin from '@fullcalendar/daygrid';
+
+    let calendar = new Calendar(calendarEl, {
+      plugins: [ dayGridPlugin ],
+      initialView: 'dayGridWeek'
+    })
+
+    var calendar = new Calendar(calendarEl, {
+          events: [
+            { // this object will be "parsed" into an Event Object
+              title: 'The Title', // a property!
+              start: '2018-09-01', // a property!
+              end: '2018-09-02' // a property! ** see important note below about 'end' **
+            }
+          ]
+        })
+
     var __assign = function() {
         __assign = Object.assign || function __assign(t) {
             for (var s, i = 1, n = arguments.length; i < n; i++) {
