@@ -43,7 +43,7 @@ def admin_authorization():
 @app.route('/timetable', methods=["POST", "GET"])
 def timetable():
     if request.method == "GET":
-        print(1)
+        print(15566)
         return render_template('calendar.html')
     if request.method == "POST":
         print(2)
