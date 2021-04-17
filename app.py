@@ -1,5 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from forms.login import LoginForm
+from forms.register import RegisterForm
 from modules.registration import reg
 from tables.user import User
 from modules.login import login
@@ -26,24 +28,25 @@ def index():
 
 @app.route('/registration', methods=["POST", "GET"])
 def registration():
+    form = RegisterForm()
     if request.method == "GET":
-        return render_template('registration.html')
+        return render_template('registration.html', form=form)
     if request.method == "POST":
-        form = request.form.to_dict()
-        reg(**form)
-        return "OK"
+        reg(form)
+        return redirect('/')
 
 
 @app.route("/login", methods=["POST", "GET"])
 def authorization():
+    form = LoginForm()
     if request.method == "GET":
-        return render_template('authorization.html')
+        return render_template('authorization.html', form=form)
     if request.method == "POST":
-        if login(request.form.get('email'), request.form.get('password')):
+        if login(form.email.data, form.password.data):
             return redirect("/")
         return "NOT OK"
 
 
 if __name__ == "__main__":
     db_session.global_init('db/db.db')
-    app.run()
+    app.run(debug=True)

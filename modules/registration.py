@@ -4,13 +4,16 @@ from tables import db_session
 from secrets import token_urlsafe
 
 
-def reg(**kwargs):
-    del kwargs['password_repeat']
-    kwargs['password'] = sha256(kwargs['password'].encode('utf-8')).hexdigest()
-    kwargs['token'] = token_urlsafe(16)
+def reg(form):
+    form.password.data = sha256(form.password.data.encode('utf-8')).hexdigest()
+    token = token_urlsafe(16)
     db_sess = db_session.create_session()
-    print(kwargs)
-    user = User(**kwargs)
+    user = User()
+    user.name = form.name.data
+    user.surname = form.surname.data
+    user.email = form.email.data
+    user.password = form.password.data
+    user.token = token
     db_sess.add(user)
     db_sess.commit()
     db_sess.close()
