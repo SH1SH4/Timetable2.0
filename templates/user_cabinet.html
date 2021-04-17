@@ -1,11 +1,15 @@
-{% static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Панель управления</title>
-</head>
-<body>
+{% extends "main.html" %}
+{% block content %}
+    <div class="card w-100">
+      <div class="card-body">
+        <h5 class="card-title">{{ user.name}} {{user.surname }}</h5>
+        <p class="card-text">Токен для бота в ТГ: {{ user.token }}</p>
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/logout" class="btn px-2 btn-primary">Выйти</a></li>
+        </ul>
 
-</body>
-</html>
+
+      </div>
+    </div>
+    <p></p>
+{% endblock %}
