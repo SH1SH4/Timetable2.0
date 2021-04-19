@@ -2,6 +2,8 @@ from flask import Flask, render_template, url_for, request, redirect, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from forms.login import LoginForm
 from forms.register import RegisterForm
+from modules.school_schedule import lessons
+from forms.school_schedule import ScheduleForm
 from modules.registration import reg
 from tables.user import User
 from modules.login import login
@@ -22,8 +24,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    form = User()
-    return render_template('main.html', form=form)
+    return render_template('main.html')
 
 
 @app.route("/user")
@@ -32,6 +33,16 @@ def user():
         return render_template("user_cabinet.html", title="Личный кабинет", user=current_user)
     else:
         abort(404)
+
+
+@app.route("/school_schedule", methods=["GET", "POST"])
+def school_schedule():
+    form = ScheduleForm()
+    if request.method == "GET":
+        return render_template("school_schedule.html", title="Расписание", form=form)
+    if request.method == "POST":
+        lessons(form)
+        return redirect("/")
 
 
 @app.route('/registration', methods=["POST", "GET"])
@@ -46,7 +57,6 @@ def registration():
 
 @app.route("/login", methods=["POST", "GET"])
 def authorization():
-
     form = LoginForm()
     if request.method == "GET":
         return render_template('authorization.html', form=form)
@@ -65,4 +75,4 @@ def logout():
 
 if __name__ == "__main__":
     db_session.global_init('db/db.db')
-    app.run(debug=True)
+    app.run(port=8080, debug=True)

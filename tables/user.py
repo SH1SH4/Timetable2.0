@@ -16,6 +16,22 @@ class User(SqlAlchemyBase, UserMixin):
     token = Column(String, nullable=False)
     connection = Column(String, nullable=True)
     table = relationship("Tables")
+    # lessons = relationship("Lessons")
+
+
+class Lessons(SqlAlchemyBase):
+    __tablename__ = "lessons"
+    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
+    day = Column(String, nullable=False)
+    # user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    lesson1 = Column(String, nullable=True)
+    lesson2 = Column(String, nullable=True)
+    lesson3 = Column(String, nullable=True)
+    lesson4 = Column(String, nullable=True)
+    lesson5 = Column(String, nullable=True)
+    lesson6 = Column(String, nullable=True)
+    lesson7 = Column(String, nullable=True)
+    lesson8 = Column(String, nullable=True)
 
 
 class Tables(SqlAlchemyBase):
@@ -27,3 +43,4 @@ class Tables(SqlAlchemyBase):
     homework_text = Column(Text)
     homework_img = Column(String)
     completed = Column(Boolean, default=False)
+
