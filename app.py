@@ -1,5 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from modules.api import TableResource
+from flask_restful import Api
 from forms.login import LoginForm
 from forms.register import RegisterForm
 from modules.registration import reg
@@ -9,10 +11,11 @@ from tables import db_session
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456789qwerty'
+api = Api(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+api.add_resource(TableResource)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -31,7 +34,7 @@ def user():
     if current_user.is_authenticated:
         return render_template("user_cabinet.html", title="Личный кабинет", user=current_user)
     else:
-        abort(404)
+        abort(403)
 
 
 @app.route('/registration', methods=["POST", "GET"])
