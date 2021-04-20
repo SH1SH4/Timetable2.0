@@ -43,7 +43,7 @@ def homework():
     if request.method == "GET":
         return render_template('homework.html', title="Запись", form=form)
     if request.method == "POST":
-        homework_form(form)
+        homework_form(form, current_user)
         return redirect('/')
 
 
