@@ -40,21 +40,27 @@ def user():
 @app.route("/homework", methods=["POST", "GET"])
 def homework():
     form = HomeworkForm()
-    if request.method == "GET":
-        return render_template('homework.html', title="Запись", form=form)
-    if request.method == "POST":
-        homework_form(form, current_user)
-        return redirect('/')
+    if current_user.is_authenticated:
+        if request.method == "GET":
+            return render_template('homework.html', title="Запись", form=form)
+        if request.method == "POST":
+            homework_form(form, current_user)
+            return redirect('/')
+    else:
+        return redirect("/registration")
 
 
 @app.route("/school_schedule", methods=["GET", "POST"])
 def school_schedule():
     form = ScheduleForm()
-    if request.method == "GET":
-        return render_template("school_schedule.html", title="Расписание", form=form)
-    if request.method == "POST":
-        lessons(form)
-        return redirect("/")
+    if current_user.is_authentificated:
+        if request.method == "GET":
+            return render_template("school_schedule.html", title="Расписание", form=form)
+        if request.method == "POST":
+            lessons(form)
+            return redirect("/")
+    else:
+        return redirect("/registration")
 
 
 @app.route('/registration', methods=["POST", "GET"])
