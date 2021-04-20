@@ -42,5 +42,14 @@ class Tables(SqlAlchemyBase):
     time = Column(Time, nullable=False)
     title = Column(String, nullable=False)
     homework_text = Column(Text, nullable=True)
-    homework_img = Column(String, nullable=True)
+    homework_img = relationship('Image')
     completed = Column(Boolean, default=False)
+
+
+class Image(SqlAlchemyBase):
+    __tablename__ = 'images'
+    id = Column(Integer, primary_key=True, unique=True)
+    owner_id = Column(Integer, ForeignKey('users.id'))
+    parent_table = Column(Integer, ForeignKey('homework.id'))
+    way = Column(String)
+    hash = Column(String, unique=True)

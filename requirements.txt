@@ -4,3 +4,4 @@ flask_restful
 flask-wtf
 flask_login
 jsonschema
+pillow

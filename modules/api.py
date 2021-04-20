@@ -51,11 +51,3 @@ class TableResource(Resource):
         db_sess.close()
         response = Flask.response_class(status=400)
         return response
-
-
-# class ImgUpload(Resource):
-#         try:
-#             data = request.
-#         except Exception:
-#             response = Flask.response_class(status=400)
-#             return response

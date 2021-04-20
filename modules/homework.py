@@ -1,5 +1,11 @@
 from tables.user import Tables
 from tables import db_session
+from PIL import Image
+from io import BytesIO
+
+
+def load_img(img, user, table):
+    pass
 
 
 def homework_form(form, user):
@@ -10,8 +16,9 @@ def homework_form(form, user):
     record.title = form.title.data
     record.homework_text = form.text.data
     record.owner_id = user.id
-    print(type(form.day.data), type(form.time.data))
     # record.homework_img = form.file.data
+    Image.open(BytesIO(
+    form.file.data.content)).show()
     db_sess.add(record)
     db_sess.commit()
     db_sess.close()
