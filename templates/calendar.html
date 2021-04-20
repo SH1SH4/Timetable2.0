@@ -2,8 +2,11 @@
 <html lang='en'>
   <head>
     <meta charset='utf-8' />
-    <link href='static/css/calendar.css' rel='stylesheet' />
-    <script src='static/js/calendar.js'></script>
+    <link href="{{ url_for('static', filename='css/calendar.css') }}" rel='stylesheet' />
+    <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+    <div id='calendar'></div>
+  </head>
+  <body>
     <script>
 
       document.addEventListener('DOMContentLoaded', function() {
@@ -15,8 +18,5 @@
       });
 
     </script>
-  </head>
-  <body>
-    <div id='calendar'></div>
   </body>
 </html>

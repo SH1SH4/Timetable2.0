@@ -24,7 +24,7 @@ def load_user(user_id):
 def index():
     form = User()
     return render_template('main.html', form=form)
-    return render_template('page1.html')
+    # return render_template('page1.html')
 
 
 @app.route("/user")
