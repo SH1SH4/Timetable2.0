@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang='en'>
-  <head>
-    <meta charset='utf-8' />
-    <link href="{{ url_for('static', filename='css/calendar.css') }}" rel='stylesheet' />
+<head>
+    <meta charset='utf-8'/>
+    <link href="{{ url_for('static', filename='css/calendar.css') }}" rel='stylesheet'/>
     <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
-    <div id='calendar'></div>
-  </head>
-  <body>
-    <script>
+
+</head>
+<body>
+<div id='calendar'></div>
+<script>
 
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridWeek'
+          initialView: 'dayGridMonth'
         });
         calendar.render();
       });
 
-    </script>
-  </body>
+
+
+</script>
+
+
+</body>
 </html>

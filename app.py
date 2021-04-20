@@ -68,7 +68,7 @@ def logout():
 def timetable():
     if request.method == "GET":
         print(1)
-        return render_template('calendar.html')
+        return render_template('background-events.html')
     if request.method == "POST":
         print(2)
         return '2'
