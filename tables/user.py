@@ -38,8 +38,9 @@ class Tables(SqlAlchemyBase):
     __tablename__ = 'homework'
     id = Column(Integer, primary_key=True, unique=True)
     owner_id = Column(Integer, ForeignKey('users.id'))
-    day = Column(DateTime)
-    time = Column(DateTime)
+    day = Column(DateTime, nullable=False)
+    time = Column(DateTime, nullable=False)
+    title = Column(String, nullable=False)
     homework_text = Column(Text)
     homework_img = Column(String)
     completed = Column(Boolean, default=False)

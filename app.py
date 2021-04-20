@@ -1,7 +1,9 @@
 from flask import Flask, render_template, url_for, request, redirect, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from forms.login import LoginForm
+from forms.homework import HomeworkForm
 from forms.register import RegisterForm
+from modules.homework import homework_form
 from modules.school_schedule import lessons
 from forms.school_schedule import ScheduleForm
 from modules.registration import reg
@@ -33,6 +35,16 @@ def user():
         return render_template("user_cabinet.html", title="Личный кабинет", user=current_user)
     else:
         abort(404)
+
+
+@app.route("/homework", methods=["POST", "GET"])
+def homework():
+    form = HomeworkForm()
+    if request.method == "GET":
+        return render_template('homework.html', title="Запись", form=form)
+    if request.method == "POST":
+        homework_form(form)
+        return redirect('/')
 
 
 @app.route("/school_schedule", methods=["GET", "POST"])
