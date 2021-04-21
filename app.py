@@ -1,50 +1,74 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, redirect, abort
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from forms.login import LoginForm
+from forms.register import RegisterForm
 from modules.registration import reg
+from tables.user import User
 from modules.login import login
 from tables import db_session
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '123456789qwerty'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 @app.route('/')
 def index():
-    return render_template('main.html')
+    form = User()
+    return render_template('main.html', form=form)
+    # return render_template('page1.html')
+
+
+@app.route("/user")
+def user():
+    if current_user.is_authenticated:
+        return render_template("user_cabinet.html", title="Личный кабинет", user=current_user)
+    else:
+        abort(404)
 
 
 @app.route('/registration', methods=["POST", "GET"])
 def registration():
+    form = RegisterForm()
     if request.method == "GET":
-        return render_template('registration.html')
+        return render_template('registration.html', form=form)
     if request.method == "POST":
-        form = request.form.to_dict()
-        reg(**form)
-        return "OK"
+        reg(form)
+        return redirect('/')
 
 
 @app.route("/login", methods=["POST", "GET"])
 def authorization():
+
+    form = LoginForm()
     if request.method == "GET":
-        return render_template('authorization.html')
+        return render_template('authorization.html', form=form)
     if request.method == "POST":
-        if login(request.form.get('email'), request.form.get('password')):
-            return "OK"
-        return "NOT OK"
+        if login(form.email.data, form.password.data):
+            return redirect("/")
+        return render_template('authorization.html', form=form)
 
 
-@app.route('/admin', methods=["POST", "GET"])
-def admin_authorization():
-    if request.method == "GET":
-        return render_template('authorization.html')
-    if request.method == "POST":
-        print(request.form.get('password'))
-        print(request.form.get('email'))
-        return "OK"
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 @app.route('/timetable', methods=["POST", "GET"])
 def timetable():
     if request.method == "GET":
-        print(15566)
-        return render_template('calendar.html')
+        print(1)
+        return render_template('background-events.html')
     if request.method == "POST":
         print(2)
         return '2'
@@ -52,4 +76,4 @@ def timetable():
 
 if __name__ == "__main__":
     db_session.global_init('db/db.db')
-    app.run()
+    app.run(debug=True)
