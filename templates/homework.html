@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 {% block content %}
-    <form method="post" class="auto_form">
+    <form method="post" class="auto_form" enctype="multipart/form-data">
     <div class="mb-3">
       <label for="exampleFormControlInput1" class="form-label">Предмет</label>
       {{ form.title(class="form-control", autocomplete="off", placeholder="Название занятия") }}

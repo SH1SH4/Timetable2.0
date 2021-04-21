@@ -7,5 +7,5 @@ class HomeworkForm(FlaskForm):
     day = DateField()
     time = TimeField()
     text = TextAreaField()
-    file = FileField()
+    file = FileField('image')
     submit = SubmitField("Добавить")

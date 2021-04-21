@@ -5,3 +5,4 @@ flask-wtf
 flask_login
 jsonschema
 pillow
+flask_uploads

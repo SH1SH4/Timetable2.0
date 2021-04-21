@@ -3,7 +3,6 @@ from tables.user import User
 from tables import db_session
 from secrets import token_urlsafe
 
-
 def reg(form):
     form.password.data = sha256(form.password.data.encode('utf-8')).hexdigest()
     token = token_urlsafe(16)
