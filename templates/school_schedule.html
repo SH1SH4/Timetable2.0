@@ -1,18 +1,13 @@
 {% extends "main.html" %}
 {% block content %}
-<div class="container">
-    {% for i in user.table %}
-        <div class="row">
-            <div class="col-sm">
-                {{ i.title }}
-            </div>
-            <div class="col-sm">
-                {{ i.day }}
-            </div>
-            <div class="col-sm">
-                {{ i.time }}
-            </div>
+
+    {% for table in user.table %}
+        <div class="card-header">
+            {{ table.title }}
+        </div>
+        <div class="card">
+            <p class="card-text">{{ table.homework_text }}</p>
+            <a href="#" class="btn btn-primary">Дедлайн: {{ table.day }} {{ table.time }}</a>
         </div>
     {% endfor %}
-</div>
 {% endblock %}

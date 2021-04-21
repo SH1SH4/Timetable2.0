@@ -59,7 +59,11 @@ def school_schedule(page):
     form = ScheduleForm()
     if current_user.is_authentificated:
         if request.method == "GET":
-            return render_template("school_schedule.html", title="Расписание", user=current_user, page=page)
+            return render_template(
+                "school_schedule.html",
+                title="Расписание",
+                user=current_user,
+                page=page)
     else:
         return redirect("/registration")
 
