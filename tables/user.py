@@ -16,7 +16,9 @@ class User(SqlAlchemyBase, UserMixin):
     token = Column(String, nullable=False, unique=True)
     connection = Column(String, nullable=True)
     is_authentificated = Column(Boolean, default=True)
-    table = relationship("Tables")
+    table = relationship("Tables",
+                         order_by='Tables.day, Tables.time',
+                         lazy='dynamic')
     # lessons = relationship("Lessons")
 
 

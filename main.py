@@ -9,9 +9,10 @@ from modules.homework import homework_form
 from modules.school_schedule import lessons
 from forms.school_schedule import ScheduleForm
 from modules.registration import reg
-from tables.user import User
+from tables.user import User, Tables
 from modules.login import login
 from tables import db_session
+from sqlalchemy import desc
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456789qwerty'
@@ -36,7 +37,10 @@ def index():
 @app.route("/user")
 def user():
     if current_user.is_authenticated:
-        return render_template("user_cabinet.html", title="Личный кабинет", user=current_user)
+        return render_template(
+            "user_cabinet.html",
+            title="Личный кабинет",
+            user=current_user)
     else:
         abort(403)
 
@@ -63,7 +67,9 @@ def school_schedule(page):
                 "school_schedule.html",
                 title="Расписание",
                 user=current_user,
-                page=page)
+                page=page,
+                table=list(current_user.table.filter(Tables.completed == False))
+            )
     else:
         return redirect("/registration")
 
