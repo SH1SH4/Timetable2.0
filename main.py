@@ -50,7 +50,7 @@ def homework():
     form = HomeworkForm()
     if current_user.is_authenticated:
         if request.method == "GET":
-            return render_template('homework.html', title="Запись", form=form)
+            return render_template('add_homework.html', title="Запись", form=form)
         if request.method == "POST":
             homework_form(form, current_user)
             return redirect('/')
@@ -58,18 +58,35 @@ def homework():
         return redirect("/registration")
 
 
-@app.route("/school_schedule/<int:page>", methods=["GET"])
-def school_schedule(page):
-    form = ScheduleForm()
+@app.route("/school_schedule", methods=["GET"])
+def school_schedule():
     if current_user.is_authentificated:
         if request.method == "GET":
             return render_template(
                 "school_schedule.html",
                 title="Расписание",
                 user=current_user,
-                page=page,
                 table=list(current_user.table.filter(Tables.completed == False))
             )
+    else:
+        return redirect("/registration")
+
+
+@app.route("/school_schedule/<int:number>", methods=["GET"])
+def school_schedule_num(number):
+    if current_user.is_authentificated:
+        db_sess = db_session.create_session()
+        if request.method == "GET":
+            table = db_sess.query(Tables).get(number)
+            if table and table.owner_id == current_user.id:
+                return render_template(
+                    "homework.html",
+                    title=table.title,
+                    user=current_user,
+                    table=table)
+            else:
+                abort(403)
+
     else:
         return redirect("/registration")
 
