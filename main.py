@@ -101,7 +101,6 @@ def school_schedule_num(number):
                     table=table)
             else:
                 abort(403)
-
     else:
         return redirect("/registration")
 

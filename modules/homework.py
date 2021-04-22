@@ -11,10 +11,9 @@ def load_img(f, user, table, db_sess):
     img.owner_id = user
     img.parent_table = table
     img.hash = filename
-    img.way = path.join('images', str(user))
-    if not path.exists(path.join('static', img.way)):
-        mkdir(path.join('static', img.way))
-    f.save(path.join('static', img.way, filename))
+    if not path.exists(path.join('static', 'images', str(user))):
+        mkdir(path.join('static', 'images', str(user)))
+    f.save(path.join('static', 'images', str(user), filename))
     db_sess.add(img)
     db_sess.commit()
 

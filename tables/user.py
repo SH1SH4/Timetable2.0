@@ -54,5 +54,4 @@ class Image(SqlAlchemyBase):
     id = Column(Integer, primary_key=True, unique=True)
     owner_id = Column(Integer, ForeignKey('users.id'))
     parent_table = Column(Integer, ForeignKey('homework.id'))
-    way = Column(String)
     hash = Column(String, unique=True)

@@ -14,7 +14,9 @@
             <div class="col-sm">
                 <div class="card" style="width: 100%;">
                     {% for i in table.homework_img %}
-                        <img src="{{url_for('static', filename='images' + '/' +  table.owner_id|string + '/' + i.hash)}}" style="margin: 2rem; width: 30rem;" class="rounded mx-auto d-block">
+                        <img src="{{ url_for('static', filename='images' + '/' +  table.owner_id|string + '/' + i.hash) }}"
+                                style="margin: 2rem; width: 30rem;"
+                                class="rounded mx-auto d-block">
                     {% endfor %}
                 </div>
             </div>
