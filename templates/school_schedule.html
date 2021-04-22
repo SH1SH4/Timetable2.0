@@ -14,7 +14,11 @@
                                 {% endif %}
                             </p>
                             <a href="/school_schedule/{{ j.id }}" class="btn btn-outline-dark">Подробнее</a>
-                            <a href="#" class="btn btn btn-success">Выполнить</a>
+                        <form method="post" class="auto_form">
+                            {{ form.id(type="hidden", value=j.id) }}
+                            {{ form.submit(class="btn btn btn-success") }}
+                        </form>
+{#                            <a href="#" class="btn btn btn-success">Выполнить</a>#}
                         </div>
                 </div>
             {% endfor %}

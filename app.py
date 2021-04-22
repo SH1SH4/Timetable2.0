@@ -6,6 +6,7 @@ from forms.login import LoginForm
 from forms.homework import HomeworkForm
 from forms.register import RegisterForm
 from modules.homework import homework_form
+from  forms.checkout import CheckoutForm
 from modules.school_schedule import lessons
 from forms.school_schedule import ScheduleForm
 from modules.registration import reg
@@ -58,14 +59,29 @@ def homework():
         return redirect("/registration")
 
 
-@app.route("/school_schedule", methods=["GET"])
+@app.route("/school_schedule", methods=["GET", "POST"])
 def school_schedule():
+    form = CheckoutForm()
     if current_user.is_authentificated:
         if request.method == "GET":
             return render_template(
                 "school_schedule.html",
                 title="Расписание",
                 user=current_user,
+                table=list(current_user.table.filter(Tables.completed == False))
+            )
+        if request.method == "POST":
+            db_sess = db_session.create_session()
+            for record in current_user.table.filter(Tables.id == form.id.data):
+                record.completed = True
+            db_sess.commit()
+            db_sess.close()
+            return render_template(
+                "school_schedule.html",
+                title="Расписание",
+                user=current_user,
+                form=form,
+                page=page,
                 table=list(current_user.table.filter(Tables.completed == False))
             )
     else:
