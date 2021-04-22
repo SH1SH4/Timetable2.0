@@ -13,12 +13,16 @@
                                 ...
                                 {% endif %}
                             </p>
-                            <a href="/school_schedule/{{ j.id }}" class="btn btn-outline-dark">Подробнее</a>
-                        <form method="post" class="auto_form">
-                            {{ form.id(type="hidden", value=j.id) }}
-                            {{ form.submit(class="btn btn btn-success") }}
-                        </form>
-{#                            <a href="#" class="btn btn btn-success">Выполнить</a>#}
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <a href="/school_schedule/{{ j.id }}" class="btn btn-outline-dark">Подробнее</a>
+                            </div>
+                            <form method="post" class="row" style="margin-top: .3rem;">
+                                {{ form.submit(class="btn btn-success") }}
+                                {{ form.id(type="hidden", value=j.id) }}
+                            </form>
+
                         </div>
                 </div>
             {% endfor %}

@@ -67,21 +67,20 @@ def school_schedule():
             return render_template(
                 "school_schedule.html",
                 title="Расписание",
+                form=form,
                 user=current_user,
                 table=list(current_user.table.filter(Tables.completed == False))
             )
         if request.method == "POST":
             db_sess = db_session.create_session()
-            for record in current_user.table.filter(Tables.id == form.id.data):
-                record.completed = True
+            record = current_user.table.filter(Tables.id == form.id.data)[0]
+            record.completed = True
             db_sess.commit()
-            db_sess.close()
             return render_template(
                 "school_schedule.html",
                 title="Расписание",
                 user=current_user,
                 form=form,
-                page=page,
                 table=list(current_user.table.filter(Tables.completed == False))
             )
     else:
