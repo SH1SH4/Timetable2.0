@@ -20,7 +20,6 @@ from tables import db_session
 #             return response
 #
 #         try:
-#             # Если не нашли курьера - выкидываем ошибку
 #             if not user:
 #                 response = Flask.response_class(status=404)
 #                 return response

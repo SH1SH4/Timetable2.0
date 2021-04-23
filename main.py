@@ -10,7 +10,7 @@ from  forms.checkout import CheckoutForm
 from modules.school_schedule import lessons
 from forms.school_schedule import ScheduleForm
 from modules.registration import reg
-from tables.user import User, Tables
+from tables.user import User, Tables, Image
 from modules.login import login
 from tables import db_session
 from sqlalchemy import desc
@@ -54,6 +54,19 @@ def timetable():
         return redirect('/')
 
 
+@app.route('/picture/<hash>')
+def picture(hash):
+    if current_user.is_authenticated:
+        pics = current_user.images
+        pic = pics.filter(Image.hash == hash)[0]
+        if pic:
+            user_id = str(current_user.id)
+            return f'''<p><img src="{url_for('static',
+                filename='images' + '/' + user_id + '/' + pic.hash)}"
+style="margin: 2rem; width: 100%;"
+                                class="rounded mx-auto d-block">'''
+
+
 @app.route("/homework", methods=["POST", "GET"])
 def homework():
     form = HomeworkForm()
@@ -70,12 +83,18 @@ def homework():
 @app.route("/school_schedule", methods=["GET", "POST"])
 def school_schedule():
     form = CheckoutForm()
+    n = request.args.get('num')
+    if not n:
+        n = 1
+    else:
+        n = int(n)
     if current_user.is_authentificated:
         if request.method == "GET":
             return render_template(
                 "school_schedule.html",
                 title="Расписание",
                 form=form,
+                n=n,
                 user=current_user,
                 table=list(current_user.table.filter(Tables.completed == False))
             )
@@ -88,8 +107,25 @@ def school_schedule():
                 "school_schedule.html",
                 title="Расписание",
                 user=current_user,
+                n=n,
                 form=form,
-                table=list(current_user.table.filter(Tables.completed == False))
+                table=list(current_user.table.filter(Tables.completed == False, Tables.active == True))
+            )
+    else:
+        return redirect("/registration")
+
+
+@app.route("/archive", methods=["GET", "POST"])
+def archive():
+    form = CheckoutForm()
+    if current_user.is_authentificated:
+        if request.method == "GET":
+            return render_template(
+                "archive.html",
+                title="Расписание",
+                form=form,
+                user=current_user,
+                table=list(current_user.table.filter(Tables.completed == True, Tables.active == True))
             )
     else:
         return redirect("/registration")

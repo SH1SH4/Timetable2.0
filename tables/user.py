@@ -19,6 +19,7 @@ class User(SqlAlchemyBase, UserMixin):
     table = relationship("Tables",
                          order_by='Tables.day, Tables.time',
                          lazy='dynamic')
+    images = relationship("Image", lazy='dynamic')
     # lessons = relationship("Lessons")
 
 
@@ -47,6 +48,7 @@ class Tables(SqlAlchemyBase):
     homework_text = Column(Text, nullable=True)
     homework_img = relationship('Image')
     completed = Column(Boolean, default=False)
+    active = Column(Boolean, default=True)
 
 
 class Image(SqlAlchemyBase):
