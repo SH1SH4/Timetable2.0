@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html>
+{% extends "main.html" %}
+{% block content %}
 <head>
     <meta charset='utf-8'/>
     <link href="{{ url_for('static', filename='css/calendar.css') }}" rel='stylesheet'/>
@@ -18,14 +18,7 @@
         right: 'addEventButton,dayGridMonth,listMonth',
 
       },
-        customButtons: {
-            addEventButton: {
-              text: '✎Редактировать✎',
-              click: function() {
-                window.location.href = 'https://unicode-table.com/ru/270E/'
-              }
-              }
-          },
+
       locale: 'ru',
       buttonIcons: false, // show the prev/next text
       weekNumbers: true,
@@ -130,5 +123,5 @@
 <div id='calendar'></div>
 
 </body>
-</html>
+{% endblock %}
 
