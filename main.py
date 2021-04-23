@@ -46,6 +46,14 @@ def user():
         abort(403)
 
 
+@app.route('/calendar', methods=["POST", "GET"])
+def timetable():
+    if request.method == "GET":
+        return render_template('calendar.html')
+    if request.method == "POST":
+        return redirect('/')
+
+
 @app.route("/homework", methods=["POST", "GET"])
 def homework():
     form = HomeworkForm()
