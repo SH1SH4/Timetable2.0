@@ -2,4 +2,7 @@ sqlalchemy
 flask
 flask_restful
 flask-wtf
-flask-login
+flask_login
+jsonschema
+pillow
+flask_uploads

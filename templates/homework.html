@@ -1,0 +1,34 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+    <div class="row" style="margin: 2rem;">
+        <div class="col-sm">
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h1 class="card-title">{{ table.title }}</h1>
+                    <p class="card-text">{{ table.homework_text }}</p>
+                </div>
+            </div>
+        </div>
+        {% if table.homework_img %}
+            <div class="col-sm">
+                <div class="card" style="width: 100%;">
+                    {% for i in table.homework_img %}
+                        <img src="{{ url_for('static', filename='images' + '/' +  table.owner_id|string + '/' + i.hash) }}"
+                                style="margin: 2rem; width: 30rem;"
+                                class="rounded mx-auto d-block">
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <button type="button" style="width: 100%;" class="btn btn-success">Выполнить</button>
+        </div>
+        <div class="col-sm">
+            <button type="button" style="width: 100%;" class="btn btn-danger">Удалить</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

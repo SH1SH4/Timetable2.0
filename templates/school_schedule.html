@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="container">
+    {% for i in range(0, table|length, 3) %}
+        <div class="row">
+            {% for j in table[i:i + 3] %}
+                    <div class="card col" style="margin: 1rem; width: 18rem;">
+                        <h5 class="card-title" style="text-align: center; margin: .5rem;">{{ j.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted" style="text-align: center;">{{ j.day }} {{ j.time }}</h6>
+                        <div class="card-body">
+                            <p class="card-text">{{ j.homework_text[0:90] }}
+                                {% if j.homework_text|length > 90 %}
+                                ...
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <a href="/school_schedule/{{ j.id }}" class="btn btn-outline-dark">Подробнее</a>
+                            </div>
+                            <form method="post" class="row" style="margin-top: .3rem;">
+                                {{ form.submit(class="btn btn-success") }}
+                                {{ form.id(type="hidden", value=j.id) }}
+                            </form>
+
+                        </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
