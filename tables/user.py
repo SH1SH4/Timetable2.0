@@ -23,21 +23,6 @@ class User(SqlAlchemyBase, UserMixin):
     # lessons = relationship("Lessons")
 
 
-class Lessons(SqlAlchemyBase):
-    __tablename__ = "lessons"
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    day = Column(String, nullable=False)
-    # user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    lesson1 = Column(String, nullable=True)
-    lesson2 = Column(String, nullable=True)
-    lesson3 = Column(String, nullable=True)
-    lesson4 = Column(String, nullable=True)
-    lesson5 = Column(String, nullable=True)
-    lesson6 = Column(String, nullable=True)
-    lesson7 = Column(String, nullable=True)
-    lesson8 = Column(String, nullable=True)
-
-
 class Tables(SqlAlchemyBase):
     __tablename__ = 'homework'
     id = Column(Integer, primary_key=True, unique=True)

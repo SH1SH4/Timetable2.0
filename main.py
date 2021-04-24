@@ -7,13 +7,10 @@ from forms.homework import HomeworkForm
 from forms.register import RegisterForm
 from modules.homework import homework_form
 from  forms.checkout import CheckoutForm
-from modules.school_schedule import lessons
-from forms.school_schedule import ScheduleForm
 from modules.registration import reg
 from tables.user import User, Tables, Image
 from modules.login import login
 from tables import db_session
-from sqlalchemy import desc
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456789qwerty'

@@ -24,9 +24,11 @@
         {% endif %}
     </div>
     <div class="row">
-        <div class="col-sm">
-            <button type="button" style="width: 100%;" class="btn btn-success">Выполнить</button>
-        </div>
+        {% if not table.completed %}
+            <div class="col-sm">
+                <button type="button" style="width: 100%;" class="btn btn-success">Выполнить</button>
+            </div>
+        {% endif %}
         <div class="col-sm">
             <button type="button" style="width: 100%;" class="btn btn-danger">Удалить</button>
         </div>
