@@ -1,3 +1,5 @@
+from random import sample
+
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -21,8 +23,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 
 reply_keyboard = [
-    ["Расписание на завтра", "Записать ДЗ"],
-    ["Что на завтра задали",  "Расписание на неделю"]
+    ["Ближайшие 3 задания", "Рандомные 3 задания"]
 ]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True)
 
@@ -81,7 +82,20 @@ def tomorrow(update, context):
     update.message.reply_text("Раздел расписания на завтра")
 
 
-def homework(update, context):
+def random_homework(update, context):
+    user_name = update.message.chat.id
+    db_sess = db_session.create_session()
+    user = list(db_sess.query(User).filter(User.connection == user_name))[0]
+    print(user)
+    lst = list(user.table.filter(user.Tables.completed == False, user.Tables.active == True))
+    lst_table = []
+    for homework in sample(lst, 3):
+        lst_table.append(homework)
+    chedule = [
+        [InlineKeyboardButton(f"{lst_table[0].title}", callback_data=f'{lst_table[0].id}')],
+        [InlineKeyboardButton(f"{lst_table[0].title}", callback_data=f'{lst_table[0].id}')],
+        [InlineKeyboardButton(f"{lst_table[0].title}", callback_data=f'{lst_table[0].id}')]]
+
     update.message.reply_text("Раздел записи ДЗ")
 
 
@@ -128,20 +142,16 @@ def main():
             # Добавили user_data для сохранения ответа.
             AUTORIZATION: [MessageHandler(Filters.text, authorization, pass_user_data=True)],
             TRY_LOGIN: [MessageHandler(Filters.text, try_login, pass_user_data=True)]},
-
-
         fallbacks=[MessageHandler(Filters.regex("^Stop&"), stop)]
     )
     # Команды бота
     dispatcher.add_handler(CallbackQueryHandler(day_of_the_week, pattern=("^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)$")))
     dispatcher.add_handler(CallbackQueryHandler(subjects, pattern=("^(1|2|3|4|5|6|7|8)$")))
-    dispatcher.add_handler(MessageHandler(Filters.regex('^Расписание на завтра$'), tomorrow))
-    dispatcher.add_handler(MessageHandler(Filters.regex('^Записать ДЗ$'), homework))
-    dispatcher.add_handler(MessageHandler(Filters.regex('^Что на завтра задали$'), tomorrow_homework))
-    dispatcher.add_handler(MessageHandler(Filters.regex('^Расписание на неделю$'), week))
+    dispatcher.add_handler(MessageHandler(Filters.regex('^Ближайшие 3 задания$'), tomorrow))
+    dispatcher.add_handler(MessageHandler(Filters.regex('^"Рандомные 3 задания"$'), random_homework))
     dispatcher.add_handler(conv_handler)
     dispatcher.add_handler(CommandHandler("start", start))
-    # # Start the Bot
+    # Start the Bot
     updater.start_polling()
 
     updater.idle()

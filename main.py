@@ -110,6 +110,18 @@ def homework():
         return redirect("/registration")
 
 
+@app.route("/edit/<id>", methods=["GET", "POST"])
+def edit(id):
+    if current_user.is_authenticated:
+        db_sess = db_session.create_session()
+        form = HomeworkForm()
+        if request.method == "GET":
+            record = db_sess.query(Tables).get(id)
+            return render_template("edit_homework.html", title="Редактирование", form=form, table=record)
+        if request.method == "POST":
+            render_template("")
+
+
 @app.route("/school_schedule", methods=["GET", "POST"])
 def school_schedule():
     form = CheckoutForm()
