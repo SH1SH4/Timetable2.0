@@ -1,23 +1,16 @@
-from datetime import datetime
-
 from flask import Flask, render_template, url_for, request, redirect, abort, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import Api
 from forms.login import LoginForm
 from forms.homework import HomeworkForm
 from forms.register import RegisterForm
-from forms.checkout import CheckoutForm
 from modules.homework import homework_form
 from forms.checkout import CheckoutForm
-from modules.school_schedule import lessons
-from forms.school_schedule import ScheduleForm
 from modules.registration import reg
 from modules.api import TableResource
 from modules.login import login
 from tables.user import User, Tables, Image
 from tables import db_session
-from sqlalchemy import desc
-import time
 from secrets import token_urlsafe
 
 app = Flask(__name__)
@@ -153,6 +146,7 @@ def school_schedule():
 @app.route("/archive", methods=["GET", "POST"])
 def archive():
     form = CheckoutForm()
+    n = int(request.args.get('num', 1))
     if current_user.is_authentificated:
         if request.method == "GET":
             return render_template(
