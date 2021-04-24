@@ -68,10 +68,15 @@ def jsontimetable():
         db_sess = db_session.create_session()
         for obj in db_sess.query(Tables).filter(Tables.day.between(start, end)):
             print(type(obj.day))
-            result.append({
+            a = {
                 'title': obj.title,
                 'start': f"{obj.day}T{obj.time}"
-            })
+            }
+            if obj.completed:
+                a['color'] = 'green'
+            else:
+                a['color'] = 'red'
+            result.append(a)
 
         return jsonify(result)
     else:
