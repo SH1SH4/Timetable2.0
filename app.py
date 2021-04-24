@@ -131,20 +131,36 @@ def archive():
         return redirect("/registration")
 
 
-@app.route("/school_schedule/<int:number>", methods=["GET"])
+@app.route("/school_schedule/<int:number>", methods=["GET", "POST"])
 def school_schedule_num(number):
     if current_user.is_authentificated:
+        form = CheckoutForm()
         db_sess = db_session.create_session()
         if request.method == "GET":
-            table = db_sess.query(Tables).get(number)
-            if table and table.owner_id == current_user.id:
-                return render_template(
-                    "homework.html",
-                    title=table.title,
-                    user=current_user,
-                    table=table)
-            else:
-                abort(403)
+            try:
+                table = db_sess.query(Tables).get(number)
+                if table and table.owner_id == current_user.id:
+                    return render_template(
+                        "homework.html",
+                        title=table.title,
+                        user=current_user,
+                        table=table,
+                        form=form)
+                else:
+                    abort(403)
+            except Exception:
+                abort(404)
+        if request.method == "POST":
+            if form.id.data == "delete":
+                table = db_sess.query(Tables).get(number)
+                db_sess.delete(table)
+                db_sess.commit()
+                return render_template("delete.html", title="Запись удалена")
+            if form.id.data == "hide":
+                table = db_sess.query(Tables).get(number)
+                table.completed = True
+                db_sess.commit()
+                return render_template("text_archive.html", title="Добавлено в архив")
     else:
         return redirect("/registration")
 
