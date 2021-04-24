@@ -19,7 +19,7 @@ api = Api(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-api.add_resource(TableResource)
+api.add_resource(TableResource, "/add_work")
 
 
 @login_manager.user_loader
@@ -135,7 +135,10 @@ def school_schedule():
                 user=current_user,
                 n=n,
                 form=form,
-                table=list(current_user.table.filter(Tables.completed == False, Tables.active == True))
+                table=list(current_user.table.filter(
+                    Tables.completed == False,
+                    Tables.active == True)
+                )
             )
     else:
         return redirect("/registration")
@@ -165,19 +168,18 @@ def school_schedule_num(number):
         form = CheckoutForm()
         db_sess = db_session.create_session()
         if request.method == "GET":
-            try:
-                table = db_sess.query(Tables).get(number)
-                if table and table.owner_id == current_user.id:
-                    return render_template(
-                        "homework.html",
-                        title=table.title,
-                        user=current_user,
-                        table=table,
-                        form=form)
-                else:
-                    abort(403)
-            except Exception:
+            table = db_sess.query(Tables).get(number)
+            if not table:
                 abort(404)
+            elif table.owner_id == current_user.id:
+                return render_template(
+                    "homework.html",
+                    title=table.title,
+                    user=current_user,
+                    table=table,
+                    form=form)
+            else:
+                abort(403)
         if request.method == "POST":
             if form.id.data == "delete":
                 table = db_sess.query(Tables).get(number)

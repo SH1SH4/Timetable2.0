@@ -29,11 +29,10 @@ class Tables(SqlAlchemyBase):
     day = Column(Date, nullable=False)
     time = Column(Time, nullable=False)
     title = Column(String, nullable=False)
-    homework_text = Column(Text, nullable=True)
-    homework_img = relationship('Image')
+    homework_text = Column(Text, nullable=True)  # Вы спросите, почему Homework_text а не просто text.
+    homework_img = relationship('Image')  # Ответ прост - мы тупые
     completed = Column(Boolean, default=False)
     active = Column(Boolean, default=True)
-
 
 class Image(SqlAlchemyBase):
     __tablename__ = 'images'

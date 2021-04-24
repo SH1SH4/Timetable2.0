@@ -24,16 +24,20 @@ ADD_SCHEMA = {
     "time": {
       "type": "string"
     },
-    "text": {
+    "title": {
       "type": "string"
     },
-    "img": {
+    "homework_text": {
+      "type": "string"
+    },
+    "homework_img": {
       "type": "string"
     }
   },
   "required": [
     "token",
     "day",
-    "time"
+    "time",
+    "title"
   ]
 }
