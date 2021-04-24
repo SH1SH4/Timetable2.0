@@ -1,4 +1,6 @@
-from flask import Flask, render_template, url_for, request, redirect, abort
+from datetime import datetime
+
+from flask import Flask, render_template, url_for, request, redirect, abort, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from modules.api import TableResource
 from flask_restful import Api
@@ -6,7 +8,7 @@ from forms.login import LoginForm
 from forms.homework import HomeworkForm
 from forms.register import RegisterForm
 from modules.homework import homework_form
-from  forms.checkout import CheckoutForm
+from forms.checkout import CheckoutForm
 from modules.school_schedule import lessons
 from forms.school_schedule import ScheduleForm
 from modules.registration import reg
@@ -14,6 +16,7 @@ from tables.user import User, Tables, Image
 from modules.login import login
 from tables import db_session
 from sqlalchemy import desc
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456789qwerty'
@@ -51,7 +54,28 @@ def timetable():
     if request.method == "GET":
         return render_template('calendar.html')
     if request.method == "POST":
-        return redirect('/')
+        return redirect('/login')
+
+
+@app.route('/jsoncalendar')
+def jsontimetable():
+    if current_user.is_authentificated:
+        start = request.args.get('start')
+        end = request.args.get('end')
+        # start = datetime.strptime(request.args.get('start'), "%Y-%m-%dT%H:%M:%S%z").date
+        # end = datetime.strptime(request.args.get('end'), "%Y-%m-%dT%H:%M:%S%z").date
+        result = []
+        db_sess = db_session.create_session()
+        for obj in db_sess.query(Tables).filter(Tables.day.between(start, end)):
+            print(type(obj.day))
+            result.append({
+                'title': obj.title,
+                'start': f"{obj.day}T{obj.time}"
+            })
+
+        return jsonify(result)
+    else:
+        return redirect("/login")
 
 
 @app.route('/picture/<hash>')
