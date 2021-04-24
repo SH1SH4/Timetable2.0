@@ -62,7 +62,7 @@ def timetable():
 
 @app.route('/jsoncalendar')
 def jsontimetable():
-    if current_user.is_authentificated:
+    if current_user.is_authenticated:
         start = request.args.get('start')
         end = request.args.get('end')
         # start = datetime.strptime(request.args.get('start'), "%Y-%m-%dT%H:%M:%S%z").date
@@ -116,7 +116,7 @@ def homework():
 def school_schedule():
     form = CheckoutForm()
     n = int(request.args.get('num', 1))
-    if current_user.is_authentificated:
+    if current_user.is_authenticated:
         if request.method == "GET":
             return render_template(
                 "school_schedule.html",
@@ -147,7 +147,7 @@ def school_schedule():
 def archive():
     form = CheckoutForm()
     n = int(request.args.get('num', 1))
-    if current_user.is_authentificated:
+    if current_user.is_authenticated:
         if request.method == "GET":
             return render_template(
                 "archive.html",
