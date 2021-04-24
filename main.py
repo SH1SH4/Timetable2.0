@@ -1,4 +1,6 @@
-from flask import Flask, render_template, url_for, request, redirect, abort
+from datetime import datetime
+
+from flask import Flask, render_template, url_for, request, redirect, abort, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import Api
 from forms.login import LoginForm
@@ -6,11 +8,16 @@ from forms.homework import HomeworkForm
 from forms.register import RegisterForm
 from forms.checkout import CheckoutForm
 from modules.homework import homework_form
+from forms.checkout import CheckoutForm
+from modules.school_schedule import lessons
+from forms.school_schedule import ScheduleForm
 from modules.registration import reg
 from modules.api import TableResource
 from modules.login import login
 from tables.user import User, Tables, Image
 from tables import db_session
+from sqlalchemy import desc
+import time
 from secrets import token_urlsafe
 
 app = Flask(__name__)
@@ -57,7 +64,33 @@ def timetable():
     if request.method == "GET":
         return render_template('calendar.html')
     if request.method == "POST":
-        return redirect('/')
+        return redirect('/login')
+
+
+@app.route('/jsoncalendar')
+def jsontimetable():
+    if current_user.is_authentificated:
+        start = request.args.get('start')
+        end = request.args.get('end')
+        # start = datetime.strptime(request.args.get('start'), "%Y-%m-%dT%H:%M:%S%z").date
+        # end = datetime.strptime(request.args.get('end'), "%Y-%m-%dT%H:%M:%S%z").date
+        result = []
+        db_sess = db_session.create_session()
+        for obj in db_sess.query(Tables).filter(Tables.day.between(start, end)):
+            print(type(obj.day))
+            a = {
+                'title': obj.title,
+                'start': f"{obj.day}T{obj.time}"
+            }
+            if obj.completed:
+                a['color'] = 'green'
+            else:
+                a['color'] = 'red'
+            result.append(a)
+
+        return jsonify(result)
+    else:
+        return redirect("/login")
 
 
 @app.route('/picture/<hash>')
@@ -120,7 +153,6 @@ def school_schedule():
 @app.route("/archive", methods=["GET", "POST"])
 def archive():
     form = CheckoutForm()
-    n = int(request.args.get('num', 1))
     if current_user.is_authentificated:
         if request.method == "GET":
             return render_template(
@@ -129,26 +161,42 @@ def archive():
                 form=form,
                 n=n,
                 user=current_user,
-                table=list(current_user.table.filter(Tables.completed == True, Tables.active == True))
+                table=list(current_user.table.filter(Tables.completed == True))
             )
     else:
         return redirect("/registration")
 
 
-@app.route("/school_schedule/<int:number>", methods=["GET"])
+@app.route("/school_schedule/<int:number>", methods=["GET", "POST"])
 def school_schedule_num(number):
     if current_user.is_authentificated:
+        form = CheckoutForm()
         db_sess = db_session.create_session()
         if request.method == "GET":
-            table = db_sess.query(Tables).get(number)
-            if table and table.owner_id == current_user.id:
-                return render_template(
-                    "homework.html",
-                    title=table.title,
-                    user=current_user,
-                    table=table)
-            else:
-                abort(403)
+            try:
+                table = db_sess.query(Tables).get(number)
+                if table and table.owner_id == current_user.id:
+                    return render_template(
+                        "homework.html",
+                        title=table.title,
+                        user=current_user,
+                        table=table,
+                        form=form)
+                else:
+                    abort(403)
+            except Exception:
+                abort(404)
+        if request.method == "POST":
+            if form.id.data == "delete":
+                table = db_sess.query(Tables).get(number)
+                db_sess.delete(table)
+                db_sess.commit()
+                return render_template("delete.html", title="Запись удалена")
+            if form.id.data == "hide":
+                table = db_sess.query(Tables).get(number)
+                table.completed = True
+                db_sess.commit()
+                return render_template("text_archive.html", title="Добавлено в архив")
     else:
         return redirect("/registration")
 
@@ -159,8 +207,11 @@ def registration():
     if request.method == "GET":
         return render_template('registration.html', form=form)
     if request.method == "POST":
-        reg(form)
-        return redirect('/')
+        if form.password_repeat.data == form.password.data:
+            reg(form)
+            return redirect('/')
+        else:
+            return render_template('registration.html', form=form)
 
 
 @app.route("/login", methods=["POST", "GET"])
