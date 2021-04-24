@@ -65,8 +65,6 @@ def jsontimetable():
     if current_user.is_authenticated:
         start = request.args.get('start')
         end = request.args.get('end')
-        # start = datetime.strptime(request.args.get('start'), "%Y-%m-%dT%H:%M:%S%z").date
-        # end = datetime.strptime(request.args.get('end'), "%Y-%m-%dT%H:%M:%S%z").date
         result = []
         db_sess = db_session.create_session()
         for obj in db_sess.query(Tables).filter(Tables.day.between(start, end)):
@@ -163,7 +161,7 @@ def archive():
 
 @app.route("/school_schedule/<int:number>", methods=["GET", "POST"])
 def school_schedule_num(number):
-    if current_user.is_authentificated:
+    if current_user.is_authenticated:
         form = CheckoutForm()
         db_sess = db_session.create_session()
         if request.method == "GET":
