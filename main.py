@@ -83,11 +83,7 @@ def homework():
 @app.route("/school_schedule", methods=["GET", "POST"])
 def school_schedule():
     form = CheckoutForm()
-    n = request.args.get('num')
-    if not n:
-        n = 1
-    else:
-        n = int(n)
+    n = request.args.get('num', 1)
     if current_user.is_authentificated:
         if request.method == "GET":
             return render_template(
@@ -118,14 +114,16 @@ def school_schedule():
 @app.route("/archive", methods=["GET", "POST"])
 def archive():
     form = CheckoutForm()
+    n = request.args.get('num', 1)
     if current_user.is_authentificated:
         if request.method == "GET":
             return render_template(
                 "archive.html",
                 title="Расписание",
                 form=form,
+                n=n,
                 user=current_user,
-                table=list(current_user.table.filter(Tables.completed == True, Tables.active == True))
+                table=list(current_user.table.filter(Tables.completed == True))
             )
     else:
         return redirect("/registration")
