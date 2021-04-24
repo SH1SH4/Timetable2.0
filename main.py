@@ -6,7 +6,7 @@ from forms.login import LoginForm
 from forms.homework import HomeworkForm
 from forms.register import RegisterForm
 from modules.homework import homework_form
-from  forms.checkout import CheckoutForm
+from forms.checkout import CheckoutForm
 from modules.school_schedule import lessons
 from forms.school_schedule import ScheduleForm
 from modules.registration import reg
@@ -52,6 +52,22 @@ def timetable():
         return render_template('calendar.html')
     if request.method == "POST":
         return redirect('/')
+
+
+@app.route('/jsoncalendar', methods=["POST", "GET"])
+def jsontimetable():
+    form = CheckoutForm()
+    if current_user.is_authentificated:
+        if request.method == "GET":
+            db_sess = db_session.create_session()
+            homework_all = db_sess.query(Tables)
+            return
+
+        if request.method == "POST":
+            return
+
+    else:
+        return redirect("/login")
 
 
 @app.route("/homework", methods=["POST", "GET"])
