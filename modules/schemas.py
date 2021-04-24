@@ -4,6 +4,12 @@ LIST_SCHEMA = {
   "properties": {
     "token": {
       "type": "string"
+    },
+    "start": {
+      "type": "string"
+    },
+    "end": {
+      "type": "string"
     }
   },
   "required": [

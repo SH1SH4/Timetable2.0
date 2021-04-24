@@ -34,6 +34,18 @@ class Tables(SqlAlchemyBase):
     completed = Column(Boolean, default=False)
     active = Column(Boolean, default=True)
 
+    def to_dict(self):
+        response = {
+            "title": self.title,
+            "day": self.day,
+            "time": self.time,
+        }
+        if self.homework_text:
+            response['homework_text'] = self.homework_text
+        # if self.homework_img:
+        #     response['homework_img'] = f"/picture/{self.homework_img[0].hash}"
+        # Пикчи в Апиху обязательно когда-нибудь будут добавлены, правда-правда
+
 class Image(SqlAlchemyBase):
     __tablename__ = 'images'
     id = Column(Integer, primary_key=True, unique=True)

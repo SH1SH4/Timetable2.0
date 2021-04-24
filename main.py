@@ -30,7 +30,9 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('main.html')
+    if current_user.is_authenticated:
+        return redirect("/user")
+    return render_template('welcome.html')
 
 
 @app.route("/user")
@@ -61,7 +63,7 @@ def timetable():
 
 
 @app.route('/jsoncalendar')
-def jsontimetable():
+def json_timetable():
     if current_user.is_authenticated:
         start = request.args.get('start')
         end = request.args.get('end')
@@ -95,6 +97,11 @@ def picture(hash):
                 filename='images' + '/' + user_id + '/' + pic.hash)}"
 style="margin: 2rem; width: 100%;"
                                 class="rounded mx-auto d-block">'''
+        else:
+            abort(404)
+    else:
+        return redirect("/registration")
+
 
 
 @app.route("/homework", methods=["POST", "GET"])

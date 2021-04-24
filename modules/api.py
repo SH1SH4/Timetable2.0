@@ -16,8 +16,8 @@ class TableListResource(Resource):
                      schema=ADD_SCHEMA)
             token = data.pop('token')
             user = db_sess.query(User).filter(User.token == token)[0]
-            data['time'] = dt.strptime(data['time'], "%H:%M").time()
-            data['day'] = dt.strptime(data['day'], "%m-%d-%Y").date()
+            start = dt.strptime(data['start'], "%H:%M").time()
+            end = dt.strptime(data['end'], "%m-%d-%Y").date()
             assert user
 
         except AssertionError:
@@ -33,6 +33,7 @@ class TableListResource(Resource):
                                             mimetype="application/json",
                                             response=data)
             return response
+
 
 
 
