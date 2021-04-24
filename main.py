@@ -193,8 +193,11 @@ def registration():
     if request.method == "GET":
         return render_template('registration.html', form=form)
     if request.method == "POST":
-        reg(form)
-        return redirect('/')
+        if form.password_repeat.data == form.password.data:
+            reg(form)
+            return redirect('/')
+        else:
+            return render_template('registration.html', form=form)
 
 
 @app.route("/login", methods=["POST", "GET"])
