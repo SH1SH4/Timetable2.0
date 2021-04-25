@@ -7,8 +7,9 @@ from tables import db_session
 def login(mail, password):
     password = sha256(password.encode('utf-8')).hexdigest()
     db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.email == mail)[0]
-    login_user(user, remember=True)
-    if user.password == password:
-        return True
+    if len(list(db_sess.query(User).filter(User.email == mail))) > 0:
+        user = db_sess.query(User).filter(User.email == mail)[0]
+        login_user(user, remember=True)
+        if user.password == password:
+            return True
     return False

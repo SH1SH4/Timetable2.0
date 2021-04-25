@@ -36,6 +36,12 @@
     <div class="mb-3">
         <input required type="name" class="form-control" id="name" placeholder="Введите своё имя" name="name">
     </div>
+    {% if flag_email %}
+        <p>Такой email уже зарегистрирован</p>
+    {% endif %}
+    {% if flag_password %}
+        <p>Пароли не совпадают</p>
+    {% endif %}
     <div class="button_post">
         <button type="submit" class="btn btn-dark">Зарегистрироваться</button>
     </div>

@@ -229,11 +229,13 @@ def registration():
         db_sess = db_session.create_session()
         count = len(list(db_sess.query(User).filter(User.email == form.email.data)))
         db_sess.close()
-        if form.password_repeat.data == form.password.data and count == 0:
+        if form.password_repeat.data != form.password.data:
+            return render_template('registration.html', form=form, flag_password=True)
+        elif count != 0:
+            return render_template('registration.html', form=form, flag_email=True)
+        else:
             reg(form)
             return redirect('/')
-        else:
-            return render_template('registration.html', form=form)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -244,7 +246,7 @@ def authorization():
     if request.method == "POST":
         if login(form.email.data, form.password.data):
             return redirect("/")
-        return render_template('authorization.html', form=form)
+        return render_template('authorization.html', form=form, flag=True)
 
 
 @app.route('/logout')
