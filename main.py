@@ -74,10 +74,12 @@ def json_timetable():
         result = []
         db_sess = db_session.create_session()
         for obj in db_sess.query(Tables).filter(Tables.day.between(start, end)):
-            print(type(obj.day))
+            print(obj.day, obj.time)
             a = {
-                'title': obj.title,
-                'start': f"{obj.day}T{obj.time}"
+                'title': f' - {obj.title}',
+                'start': f"{obj.day}T{obj.time}",
+                'end': f"{obj.day}T{obj.time}",
+                'url': url_for('school_schedule_num', number=obj.id)
             }
             if obj.completed:
                 a['color'] = 'green'
