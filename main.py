@@ -52,8 +52,8 @@ def admin():
                 new_admin.is_admin = not new_admin.is_admin
                 db_sess.commit()
             elif ban:
-                banned = db_sess.query(User).get(admin)
-                banned.is_admin = not banned.is_admin
+                banned = db_sess.query(User).get(ban)
+                banned.is_ban = not banned.is_ban
                 db_sess.commit()
             users = list(db_sess.query(User))
             return render_template("admin.html", admin=current_user, users=users, n=n)
@@ -266,7 +266,7 @@ def authorization():
     if request.method == "GET":
         return render_template('authorization.html', form=form)
     if request.method == "POST":
-        if login(form.email.data, form.password.data):
+        if login(form.email.data, form.password.data) is True:
             return redirect("/")
         if login(form.email.data, form.password.data) == "BAN":
             return render_template('authorization.html', form=form, flag_ban=True)
