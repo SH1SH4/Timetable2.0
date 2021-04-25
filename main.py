@@ -112,7 +112,7 @@ def json_timetable():
 
         return jsonify(result)
     else:
-        return redirect("/login")
+        return redirect("/welcome")
 
 
 @app.route('/picture/<hash>')
@@ -152,7 +152,8 @@ def edit(id):
         form = HomeworkForm()
         if request.method == "GET":
             record = db_sess.query(Tables).get(id)
-            return render_template("edit_homework.html", title="Редактирование", form=form, table=record)
+            return render_template("edit_homework.html", title="Редактирование", form=form,
+                                   table=record)
         if request.method == "POST":
             record = db_sess.query(Tables).get(id)
             homework_edit(form, record, current_user)
@@ -249,19 +250,14 @@ def registration():
     if current_user.is_authenticated:
         return redirect("/user")
     form = RegisterForm()
-    if request.method == "GET":
-        return render_template('registration.html', form=form)
-    if request.method == "POST":
+    if form.validate_on_submit():
         db_sess = db_session.create_session()
         count = len(list(db_sess.query(User).filter(User.email == form.email.data)))
         db_sess.close()
-        if form.password_repeat.data != form.password.data:
-            return render_template('registration.html', form=form, flag_password=True)
-        elif count != 0:
-            return render_template('registration.html', form=form, flag_email=True)
-        else:
-            reg(form)
-            return redirect('/')
+        reg(form)
+        login(form.email.data, form.password.data)
+        return redirect('/')
+    return render_template('registration.html', form=form)
 
 
 @app.route("/login", methods=["POST", "GET"])

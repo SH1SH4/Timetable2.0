@@ -6,24 +6,49 @@
         <label for="exampleFormControlInput1" class="form-label">Введите свой Email</label>
         <input required type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com"
                name="email">
+            {% for error in form.email.errors %}
+        <div class="alert alert-warning" role="alert">
+            {{ error }}
+        </div>
+            {% endfor %}
     </div>
     <div class="mb-3">
         <label for="Password" class="form-label">Придумайте пароль</label>
         <div>
             <input required type="password" class="form-control" id="inputPassword" name="password">
         </div>
+            {% for error in form.password.errors %}
+        <div class="alert alert-warning" role="alert">
+            {{ error }}
+        </div>
+            {% endfor %}
         <label for="Password" class="form-label">Повторите пароль</label>
         <div>
             <input required type="password" class="form-control" name="password_repeat">
         </div>
+            {% for error in form.password_repeat.errors %}
+        <div class="alert alert-warning" role="alert">
+            {{ error }}
+        </div>
+            {% endfor %}
     </div>
     <div class="mb-3">
         <input required type="surname" class="form-control" id="surname" placeholder="Введите свою фамилию"
                name="surname">
     </div>
+            {% for error in form.surname.errors %}
+        <div class="alert alert-warning" role="alert">
+            {{ error }}
+        </div>
+            {% endfor %}
     <div class="mb-3">
         <input required type="name" class="form-control" id="name" placeholder="Введите своё имя" name="name">
     </div>
+            {% for error in form.name.errors %}
+        <div class="alert alert-warning" role="alert">
+            {{ error }}
+        </div>
+            {% endfor %}
     {% if flag_email %}
         <p>Такой email уже зарегистрирован</p>
     {% endif %}

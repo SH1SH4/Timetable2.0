@@ -1,13 +1,27 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, InputRequired, EqualTo, ValidationError
+from tables import db_session
+from tables.user import User
+
+required = 'Это обязательное поле'
+
+
+def validate_email(form, field):
+    db_sess = db_session.create_session()
+    user = list(db_sess.query(User).filter(User.email == field.data))
+    if user:
+        raise ValidationError('Аккаунт с таким email уже существует')
 
 
 class RegisterForm(FlaskForm):
-    email = EmailField('Почта', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
-    password_repeat = PasswordField('Повторите пароль', validators=[DataRequired()])
-    name = StringField('Имя', validators=[DataRequired()])
-    surname = StringField("Фамилия", validators=[DataRequired()])
+    email = EmailField('Почта', [DataRequired(required), validate_email])
+    password = PasswordField('Пароль', [DataRequired(required)])
+    password_repeat = PasswordField('Повторите пароль', [
+                                        DataRequired(required),
+                                        EqualTo('password', message="Пароли должны совпадать")]
+                                    )
+    name = StringField('Имя', [DataRequired(required), InputRequired()])
+    surname = StringField("Фамилия", [DataRequired(required)])
     submit = SubmitField('Войти')
