@@ -10,6 +10,8 @@ def login(mail, password):
     if len(list(db_sess.query(User).filter(User.email == mail))) > 0:
         user = db_sess.query(User).filter(User.email == mail)[0]
         login_user(user, remember=True)
+        if user.is_ban:
+            return 'BAN'
         if user.password == password:
             return True
     return False
