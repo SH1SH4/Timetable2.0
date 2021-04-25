@@ -268,6 +268,8 @@ def authorization():
     if request.method == "POST":
         if login(form.email.data, form.password.data):
             return redirect("/")
+        if login(form.email.data, form.password.data) == "BAN":
+            return render_template('authorization.html', form=form, flag_ban=True)
         return render_template('authorization.html', form=form, flag=True)
 
 
