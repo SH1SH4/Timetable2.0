@@ -12,7 +12,8 @@ from telegram import (
     ReplyKeyboardMarkup,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    CallbackQuery
+    CallbackQuery,
+    InputMediaPhoto
 )
 import logging
 from tables import db_session
@@ -111,30 +112,8 @@ def random_homework(update, context):
     print(schedule)
     reply_keyboard = InlineKeyboardMarkup(schedule)
     # update.message.photo("static/default_img/empty.png")
+    InputMediaPhoto("static/default_img/empty.png")
     update.message.reply_text("Раздел записи ДЗ", reply_markup=reply_keyboard)
-
-
-def tomorrow_homework(update, context):
-    schedule = [
-        [InlineKeyboardButton(f"Английский", callback_data='1'), InlineKeyboardButton(f"Русский", callback_data='2')],
-        [InlineKeyboardButton(f"Физика", callback_data='3'), InlineKeyboardButton(f"Алгебра", callback_data='4')],
-        [InlineKeyboardButton(f"Геометрия", callback_data='5'), InlineKeyboardButton(f"Физ-ра", callback_data='6')]]
-    reply_keyboard = InlineKeyboardMarkup(schedule)
-
-    update.message.reply_text("Раздел ДЗ на завтра", reply_markup=reply_keyboard)
-
-
-def week(update, context):
-    schedule = [
-        [InlineKeyboardButton(f"Понедельник", callback_data='Monday'),
-         InlineKeyboardButton(f"Вторник", callback_data='Tuesday')],
-        [InlineKeyboardButton(f"Среда", callback_data='Wednesday'),
-         InlineKeyboardButton(f"Четверг", callback_data='Thursday')],
-        [InlineKeyboardButton(f"Пятница", callback_data='Friday'),
-         InlineKeyboardButton(f"Суббота", callback_data='Saturday')]]
-    reply_keyboard = InlineKeyboardMarkup(schedule)
-
-    update.message.reply_text("Раздел расписания на неделю", reply_markup=reply_keyboard)
 
 
 def homework(update, context):
@@ -144,7 +123,6 @@ def homework(update, context):
     query.edit_message_text(f"{table.title}"
                             f"\nТекст: {table.homework_text}"
                             f"\nДедлайн: {table.day} {table.time}")
-
 
 
 def main():
