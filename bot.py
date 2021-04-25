@@ -13,20 +13,26 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     CallbackQuery,
-    InputMediaPhoto
+    InputMediaPhoto,
+    Bot
 )
 import logging
 from tables import db_session
 from tables.user import User, Tables
 
-AUTORIZATION, TRY_LOGIN = range(2)
+AUTORIZATION, TRY_LOGIN, CHOOSING, CHOOSE = range(4)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
+
+bot = Bot('1784466713:AAF6v8fucNKd1nDh0STyIrw-voAm6r-6Hxs')
 
 reply_keyboard = [
     ["Ближайшие задания", "Рандомные задания"]
 ]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, resize_keyboard=True)
+
+edit_keyboard = [["Выполнено", "Удалить"]]
+edit = ReplyKeyboardMarkup(edit_keyboard, one_time_keyboard=False, resize_keyboard=True)
 
 
 def start(update, context):
@@ -71,12 +77,8 @@ def user_bot(text, user_name):
         return False
 
 
-def authorization(update, context):
-    update.message.reply_text("Регистрация пройдена успешно")
-
-
 def stop(update, context):
-    update.message.reply_text("всё плохо")
+    update.message.reply_text("Лады")
 
 
 def tomorrow(update, context):
@@ -87,7 +89,7 @@ def tomorrow(update, context):
     schedule = []
     for homework in lst:
         print(homework.id)
-        schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id}')])
+        schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id} {user_name}')])
     reply_keyboard = InlineKeyboardMarkup(schedule)
     update.message.reply_text("Раздел расписания на завтра", reply_markup=reply_keyboard)
 
@@ -102,49 +104,81 @@ def random_homework(update, context):
     if len(lst) > 3:
         for homework in sample(lst, 3):
             print(homework.id)
-            schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id}')])
-    elif 0 < len(lst) < 3:
+            schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id} {user_name}')])
+    elif 0 < len(lst) <= 3:
         for homework in sample(lst, len(lst)):
-            schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id}')])
+            schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id} {user_name}')])
     elif len(lst) == 0:
         update.message.reply_text("Тут пока-что пусто")
-        return
-    print(schedule)
     reply_keyboard = InlineKeyboardMarkup(schedule)
-    # update.message.photo("static/default_img/empty.png")
-    InputMediaPhoto("static/default_img/empty.png")
-    update.message.reply_text("Раздел записи ДЗ", reply_markup=reply_keyboard)
+    update.message.reply_text("Выберите:", reply_markup=reply_keyboard)
 
 
 def homework(update, context):
     query = update.callback_query
+    text, id = query.data.split(" ")
     db_sess = db_session.create_session()
-    table = db_sess.query(Tables).get(int(query.data))
+    table = db_sess.query(Tables).get(int(text))
+    schedule = [[(InlineKeyboardButton(f"Удалить", callback_data=f'Удалить {text}')),
+                 (InlineKeyboardButton(f"Выполнить", callback_data=f'Выполнено {text}'))]]
+    reply_keyboard = InlineKeyboardMarkup(schedule)
     query.edit_message_text(f"{table.title}"
                             f"\nТекст: {table.homework_text}"
                             f"\nДедлайн: {table.day} {table.time}")
+    for i in table.homework_img:
+        img = open(f"static/images/{table.owner_id}/{i.hash}", mode='rb')
+        bot.send_photo(chat_id=int(id), photo=img)
+    bot.send_message(chat_id=int(id), text="Выберите действие", reply_markup=reply_keyboard)
+
+
+def record_delete(update, context):
+    query = update.callback_query
+    _, id = query.data.split()
+    db_sess = db_session.create_session()
+    table = db_sess.query(Tables).get(int(id))
+    title = table.title
+    db_sess.delete(table)
+    db_sess.commit()
+    db_sess.close()
+    query.edit_message_text(f'Запись: "{title}" удалена')
+
+
+def done(update, context):
+    query = update.callback_query
+    _, id = query.data.split()
+    db_sess = db_session.create_session()
+    table = db_sess.query(Tables).get(int(id))
+    title = table.title
+    table.completed = True
+    db_sess.commit()
+    db_sess.close()
+    query.edit_message_text(f'Запись: "{title}" добавлена в архив')
 
 
 def main():
-    updater = Updater('1757297275:AAFWjozUO911jvNakuoeoSS8m1yZaA5txTY', use_context=True)
+    updater = Updater('1784466713:AAF6v8fucNKd1nDh0STyIrw-voAm6r-6Hxs', use_context=True)
+
     dispatcher = updater.dispatcher
 
     conv_handler = ConversationHandler(
-
         entry_points=[CommandHandler('start', start)],
 
         states={
             # Добавили user_data для сохранения ответа.
-            AUTORIZATION: [MessageHandler(Filters.text, authorization, pass_user_data=True)],
-            TRY_LOGIN: [MessageHandler(Filters.text, try_login, pass_user_data=True)]},
+            TRY_LOGIN: [MessageHandler(Filters.text, try_login, pass_user_data=True)]
+        },
         fallbacks=[MessageHandler(Filters.regex("^Stop&"), stop)]
     )
+
     # Команды бота
+    dispatcher.add_handler(CallbackQueryHandler(done, pattern="Выполнено"))
+    dispatcher.add_handler(CallbackQueryHandler(record_delete, pattern="Удалить"))
     dispatcher.add_handler(CallbackQueryHandler(homework))
+
     dispatcher.add_handler(MessageHandler(Filters.regex('^Ближайшие задания$'), tomorrow))
     dispatcher.add_handler(MessageHandler(Filters.regex('^Рандомные задания$'), random_homework))
     dispatcher.add_handler(conv_handler)
-    dispatcher.add_handler(CommandHandler("start", start))
+
     # Start the Bot
     updater.start_polling()
 
