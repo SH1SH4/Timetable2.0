@@ -1,7 +1,6 @@
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Boolean, Time, Date
 from sqlalchemy.orm import validates, relationship
-from datetime import datetime
 from .db_session import SqlAlchemyBase
 
 
@@ -15,26 +14,11 @@ class User(SqlAlchemyBase, UserMixin):
     password = Column(String, nullable=False)
     token = Column(String, nullable=False, unique=True)
     connection = Column(String, nullable=True)
-    is_authentificated = Column(Boolean, default=True)
     table = relationship("Tables",
                          order_by='Tables.day, Tables.time',
                          lazy='dynamic')
+    images = relationship("Image", lazy='dynamic')
     # lessons = relationship("Lessons")
-
-
-class Lessons(SqlAlchemyBase):
-    __tablename__ = "lessons"
-    id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    day = Column(String, nullable=False)
-    # user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    lesson1 = Column(String, nullable=True)
-    lesson2 = Column(String, nullable=True)
-    lesson3 = Column(String, nullable=True)
-    lesson4 = Column(String, nullable=True)
-    lesson5 = Column(String, nullable=True)
-    lesson6 = Column(String, nullable=True)
-    lesson7 = Column(String, nullable=True)
-    lesson8 = Column(String, nullable=True)
 
 
 class Tables(SqlAlchemyBase):
@@ -44,10 +28,23 @@ class Tables(SqlAlchemyBase):
     day = Column(Date, nullable=False)
     time = Column(Time, nullable=False)
     title = Column(String, nullable=False)
-    homework_text = Column(Text, nullable=True)
-    homework_img = relationship('Image')
+    homework_text = Column(Text, nullable=True)  # Вы спросите, почему Homework_text а не просто text.
+    homework_img = relationship('Image')  # Ответ прост - мы тупые
     completed = Column(Boolean, default=False)
+    active = Column(Boolean, default=True)
 
+    def to_dict(self):
+        response = {
+            "title": self.title,
+            "day": str(self.day),
+            "time": str(self.time),
+        }
+        if self.homework_text:
+            response['homework_text'] = self.homework_text
+        # if self.homework_img:
+        #     response['homework_img'] = f"/picture/{self.homework_img[0].hash}"
+        # Пикчи в Апиху обязательно когда-нибудь будут добавлены, правда-правда
+        return response
 
 class Image(SqlAlchemyBase):
     __tablename__ = 'images'

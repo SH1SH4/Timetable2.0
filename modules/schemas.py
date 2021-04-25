@@ -4,6 +4,12 @@ LIST_SCHEMA = {
   "properties": {
     "token": {
       "type": "string"
+    },
+    "start": {
+      "type": "string"
+    },
+    "end": {
+      "type": "string"
     }
   },
   "required": [
@@ -24,16 +30,20 @@ ADD_SCHEMA = {
     "time": {
       "type": "string"
     },
-    "text": {
+    "title": {
       "type": "string"
     },
-    "img": {
+    "homework_text": {
+      "type": "string"
+    },
+    "homework_img": {
       "type": "string"
     }
   },
   "required": [
     "token",
     "day",
-    "time"
+    "time",
+    "title"
   ]
 }
