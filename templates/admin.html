@@ -48,18 +48,18 @@
                 {% else %}
                 {% if j.is_ban %}
                 <div class="col">
-                    <a href="/admin?ban={{ j.id }}" class="btn btn-danger col">Разбан</a>
+                    <a href="/admin?page={{ n + 1 }}&ban={{ j.id }}" class="btn btn-danger col">Разбан</a>
                 </div>
                 {% elif j.is_admin %}
                     <div class="col">
-                        <a class="btn btn-warning col" href="/admin?admin={{ j.id }}">Снять Админку</a>
+                        <a class="btn btn-warning col" href="/admin?page={{ n + 1 }}&admin={{ j.id }}">Снять Админку</a>
                     </div>
                 {% else %}
                     <div class="col">
-                        <a href="/admin?ban={{ j.id }}" class="btn btn-danger col">Бан</a>
+                        <a href="/admin?page={{ n + 1 }}&ban={{ j.id }}" class="btn btn-danger col">Бан</a>
                     </div>
                     <div class="col">
-                        <a class="btn btn-warning col" href="/admin?admin={{ j.id }}">Выдать Админку</a>
+                        <a class="btn btn-warning col" href="/admin?page={{ n + 1 }}&admin={{ j.id }}">Выдать Админку</a>
                     </div>
                 {% endif %}
 

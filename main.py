@@ -46,7 +46,7 @@ def admin():
     if current_user.is_authenticated:
         if current_user.is_admin:
             db_sess = db_session.create_session()
-            n = int(request.args.get('num', 1))
+            n = int(request.args.get('page', 1))
             admin = int(request.args.get('admin', 0))
             ban = int(request.args.get('ban', 0))
             if admin:
