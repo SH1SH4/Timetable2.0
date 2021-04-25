@@ -99,7 +99,7 @@ def json_timetable():
         end = request.args.get('end')
         result = []
         db_sess = db_session.create_session()
-        for obj in db_sess.query(Tables).filter(Tables.day.between(start, end)):
+        for obj in db_sess.query(Tables).filter(Tables.day.between(start, end), Tables.owner_id == current_user.id):
             print(type(obj.day))
             a = {
                 'title': f' - {obj.title}',
