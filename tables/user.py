@@ -36,14 +36,15 @@ class Tables(SqlAlchemyBase):
     def to_dict(self):
         response = {
             "title": self.title,
-            "day": self.day,
-            "time": self.time,
+            "day": str(self.day),
+            "time": str(self.time),
         }
         if self.homework_text:
             response['homework_text'] = self.homework_text
         # if self.homework_img:
         #     response['homework_img'] = f"/picture/{self.homework_img[0].hash}"
         # Пикчи в Апиху обязательно когда-нибудь будут добавлены, правда-правда
+        return response
 
 class Image(SqlAlchemyBase):
     __tablename__ = 'images'

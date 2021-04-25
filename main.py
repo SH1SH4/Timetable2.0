@@ -10,7 +10,7 @@ from modules.homework import homework_form
 from forms.checkout import CheckoutForm
 from modules.registration import reg
 from modules.edit_homework import homework_edit
-from modules.api import TableResource
+from modules.api import TableResource, TableListResource
 from modules.login import login
 from tables.user import User, Tables, Image
 from tables import db_session
@@ -23,6 +23,7 @@ api = Api(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 api.add_resource(TableResource, "/add_work")
+api.add_resource(TableListResource, "/homework_list")
 
 
 @login_manager.user_loader
@@ -114,7 +115,7 @@ def homework():
             return render_template('add_homework.html', title="Запись", form=form)
         if request.method == "POST":
             homework_form(form, current_user)
-            return redirect('/')
+            return redirect('/homework')
     else:
         return redirect("/")
 
