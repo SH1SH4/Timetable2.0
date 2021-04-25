@@ -1,5 +1,5 @@
-from json import loads, dumps, JSONDecodeError
-from jsonschema import validate, ValidationError
+from json import loads, dumps
+from jsonschema import validate
 from modules.schemas import LIST_SCHEMA, ADD_SCHEMA
 from tables.user import User, Tables
 from tables import db_session

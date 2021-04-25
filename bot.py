@@ -12,8 +12,6 @@ from telegram import (
     ReplyKeyboardMarkup,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    CallbackQuery,
-    InputMediaPhoto,
     Bot
 )
 import logging
@@ -102,40 +100,40 @@ def random_homework(update, context):
     lst = list(user.table.filter(Tables.completed == False))
     schedule = []
     if len(lst) > 3:
-        for homework in sample(lst, 3):
-            print(homework.id)
-            schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id} {user_name}')])
+        for i in sample(lst, 3):
+            print(i.id)
+            schedule.append([InlineKeyboardButton(f"{i.title}", callback_data=f'{i.id} {user_name}')])
     elif 0 < len(lst) <= 3:
-        for homework in sample(lst, len(lst)):
-            schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id} {user_name}')])
+        for i in sample(lst, len(lst)):
+            schedule.append([InlineKeyboardButton(f"{i.title}", callback_data=f'{i.id} {user_name}')])
     elif len(lst) == 0:
         update.message.reply_text("Тут пока-что пусто")
-    reply_keyboard = InlineKeyboardMarkup(schedule)
-    update.message.reply_text("Выберите:", reply_markup=reply_keyboard)
+    keyboard = InlineKeyboardMarkup(schedule)
+    update.message.reply_text("Выберите:", reply_markup=keyboard)
 
 
 def homework(update, context):
     query = update.callback_query
-    text, id = query.data.split(" ")
+    text, user = query.data.split(" ")
     db_sess = db_session.create_session()
     table = db_sess.query(Tables).get(int(text))
-    schedule = [[(InlineKeyboardButton(f"Удалить", callback_data=f'Удалить {text}')),
-                 (InlineKeyboardButton(f"Выполнить", callback_data=f'Выполнено {text}'))]]
-    reply_keyboard = InlineKeyboardMarkup(schedule)
+    schedule = [[(InlineKeyboardButton("Удалить", callback_data=f'Удалить {text}')),
+                 (InlineKeyboardButton("Выполнить", callback_data=f'Выполнено {text}'))]]
+    keyboard = InlineKeyboardMarkup(schedule)
     query.edit_message_text(f"{table.title}"
                             f"\nТекст: {table.homework_text}"
                             f"\nДедлайн: {table.day} {table.time}")
     for i in table.homework_img:
         img = open(f"static/images/{table.owner_id}/{i.hash}", mode='rb')
-        bot.send_photo(chat_id=int(id), photo=img)
-    bot.send_message(chat_id=int(id), text="Выберите действие", reply_markup=reply_keyboard)
+        bot.send_photo(chat_id=int(user), photo=img)
+    bot.send_message(chat_id=int(user), text="Выберите действие", reply_markup=keyboard)
 
 
 def record_delete(update, context):
     query = update.callback_query
-    _, id = query.data.split()
+    _, user = query.data.split()
     db_sess = db_session.create_session()
-    table = db_sess.query(Tables).get(int(id))
+    table = db_sess.query(Tables).get(int(user))
     title = table.title
     db_sess.delete(table)
     db_sess.commit()
@@ -145,9 +143,9 @@ def record_delete(update, context):
 
 def done(update, context):
     query = update.callback_query
-    _, id = query.data.split()
+    _, user = query.data.split()
     db_sess = db_session.create_session()
-    table = db_sess.query(Tables).get(int(id))
+    table = db_sess.query(Tables).get(int(user))
     title = table.title
     table.completed = True
     db_sess.commit()
@@ -186,5 +184,5 @@ def main():
 
 
 if __name__ == '__main__':
-    db_session.global_init(f"db/db.db")
+    db_session.global_init("db/db.db")
     main()

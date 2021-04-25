@@ -1,6 +1,6 @@
 from tables.user import Tables, Image
 from tables import db_session
-from os import getcwd, path, mkdir
+from os import path, mkdir
 from secrets import token_hex
 
 

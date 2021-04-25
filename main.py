@@ -1,7 +1,6 @@
 import os
-
 from flask import Flask, render_template, url_for, request, redirect, abort, jsonify
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_required, logout_user, current_user
 from flask_restful import Api
 from forms.login import LoginForm
 from forms.homework import HomeworkForm
@@ -227,7 +226,10 @@ def registration():
     if request.method == "GET":
         return render_template('registration.html', form=form)
     if request.method == "POST":
-        if form.password_repeat.data == form.password.data:
+        db_sess = db_session.create_session()
+        count = len(list(db_sess.query(User).filter(User.email == form.email.data)))
+        db_sess.close()
+        if form.password_repeat.data == form.password.data and count == 0:
             reg(form)
             return redirect('/')
         else:

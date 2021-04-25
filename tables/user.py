@@ -1,6 +1,6 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Boolean, Time, Date
-from sqlalchemy.orm import validates, relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, Boolean, Time, Date
+from sqlalchemy.orm import relationship
 from .db_session import SqlAlchemyBase
 
 
@@ -45,7 +45,6 @@ class Tables(SqlAlchemyBase):
         #     response['homework_img'] = f"/picture/{self.homework_img[0].hash}"
         # Пикчи в Апиху обязательно когда-нибудь будут добавлены, правда-правда
         return response
-
 
 
 class Image(SqlAlchemyBase):
