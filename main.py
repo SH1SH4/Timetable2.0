@@ -153,9 +153,10 @@ def edit(id):
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
         form = HomeworkForm()
-        if db_sess.query(Tables).get().owner_id == current_user.id:
+        table = db_sess.query(Tables).get(id)
+        if table and table.owner_id == current_user.id:
             if request.method == "GET":
-                record = db_sess.query(Tables).get(id)
+                record = table
                 return render_template("edit_homework.html", title="Редактирование", form=form,
                                        table=record)
             if request.method == "POST":
@@ -290,6 +291,6 @@ def logout():
 
 if __name__ == "__main__":
     db_session.global_init('db/db.db')
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-    # app.run(host='127.0.0.1', port=8080, debug=True)
+    # port = int(os.environ.get("PORT", 5000))
+    # app.run(host='0.0.0.0', port=port)
+    app.run(host='127.0.0.1', port=8080, debug=True)
