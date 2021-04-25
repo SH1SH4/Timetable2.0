@@ -153,14 +153,16 @@ def edit(id):
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
         form = HomeworkForm()
-        if request.method == "GET":
-            record = db_sess.query(Tables).get(id)
-            return render_template("edit_homework.html", title="Редактирование", form=form,
-                                   table=record)
-        if request.method == "POST":
-            record = db_sess.query(Tables).get(id)
-            homework_edit(form, record, current_user)
-            return redirect(f"/school_schedule/{id}")
+        if db_sess.query(Tables).get().owner_id == current_user.id:
+            if request.method == "GET":
+                record = db_sess.query(Tables).get(id)
+                return render_template("edit_homework.html", title="Редактирование", form=form,
+                                       table=record)
+            if request.method == "POST":
+                record = db_sess.query(Tables).get(id)
+                homework_edit(form, record, current_user)
+                return redirect(f"/school_schedule/{id}")
+        abort(403)
 
 
 @app.route("/school_schedule", methods=["GET", "POST"])
