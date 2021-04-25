@@ -39,6 +39,27 @@ def index():
     return render_template('welcome.html')
 
 
+@app.route('/admin')
+def admin():
+    if current_user.is_authenticated:
+        if current_user.is_admin:
+            db_sess = db_session.create_session()
+            n = int(request.args.get('num', 1))
+            admin = int(request.args.get('admin', 0))
+            ban = int(request.args.get('ban', 0))
+            if admin:
+                new_admin = db_sess.query(User).get(admin)
+                new_admin.is_admin = not new_admin.is_admin
+                db_sess.commit()
+            elif ban:
+                banned = db_sess.query(User).get(admin)
+                banned.is_admin = not banned.is_admin
+                db_sess.commit()
+            users = list(db_sess.query(User))
+            return render_template("admin.html", admin=current_user, users=users, n=n)
+    return render_template('welcome.html')
+
+
 @app.route("/user")
 def user():
     if current_user.is_authenticated:
