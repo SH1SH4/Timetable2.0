@@ -15,6 +15,8 @@ from modules.login import login
 from tables.user import User, Tables, Image
 from tables import db_session
 from secrets import token_urlsafe
+from threading import Thread
+import bot
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123456789qwerty'
@@ -244,6 +246,8 @@ def school_schedule_num(number):
 
 @app.route('/registration', methods=["POST", "GET"])
 def registration():
+    if current_user.is_authenticated:
+        return redirect("/user")
     form = RegisterForm()
     if request.method == "GET":
         return render_template('registration.html', form=form)
@@ -262,6 +266,8 @@ def registration():
 
 @app.route("/login", methods=["POST", "GET"])
 def authorization():
+    if current_user.is_authenticated:
+        return redirect("/user")
     form = LoginForm()
     if request.method == "GET":
         return render_template('authorization.html', form=form)
