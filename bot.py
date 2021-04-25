@@ -119,7 +119,8 @@ def homework(update, context):
     text, id = query.data.split(" ")
     db_sess = db_session.create_session()
     table = db_sess.query(Tables).get(int(text))
-    schedule = [[(InlineKeyboardButton(f"Удалить", callback_data=f'Удалить {text}')), (InlineKeyboardButton(f"Выполнить", callback_data=f'Выполнено {text}'))]]
+    schedule = [[(InlineKeyboardButton(f"Удалить", callback_data=f'Удалить {text}')),
+                 (InlineKeyboardButton(f"Выполнить", callback_data=f'Выполнено {text}'))]]
     reply_keyboard = InlineKeyboardMarkup(schedule)
     query.edit_message_text(f"{table.title}"
                             f"\nТекст: {table.homework_text}"
@@ -177,7 +178,6 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.regex('^Ближайшие задания$'), tomorrow))
     dispatcher.add_handler(MessageHandler(Filters.regex('^Рандомные задания$'), random_homework))
     dispatcher.add_handler(conv_handler)
-
 
     # Start the Bot
     updater.start_polling()
