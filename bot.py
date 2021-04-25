@@ -89,7 +89,10 @@ def tomorrow(update, context):
         print(homework.id)
         schedule.append([InlineKeyboardButton(f"{homework.title}", callback_data=f'{homework.id} {user_name}')])
     reply_keyboard = InlineKeyboardMarkup(schedule)
-    update.message.reply_text("Раздел расписания на завтра", reply_markup=reply_keyboard)
+    if len(lst) == 0:
+        update.message.reply_text("Тут пока-что пусто")
+    else:
+        update.message.reply_text("Выберите запись:", reply_markup=reply_keyboard)
 
 
 def random_homework(update, context):
@@ -106,10 +109,11 @@ def random_homework(update, context):
     elif 0 < len(lst) <= 3:
         for i in sample(lst, len(lst)):
             schedule.append([InlineKeyboardButton(f"{i.title}", callback_data=f'{i.id} {user_name}')])
-    elif len(lst) == 0:
+    if len(lst) == 0:
         update.message.reply_text("Тут пока-что пусто")
-    keyboard = InlineKeyboardMarkup(schedule)
-    update.message.reply_text("Выберите:", reply_markup=keyboard)
+    else:
+        keyboard = InlineKeyboardMarkup(schedule)
+        update.message.reply_text("Выберите запись:", reply_markup=keyboard)
 
 
 def homework(update, context):
