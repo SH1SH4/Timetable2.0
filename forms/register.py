@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import DataRequired, InputRequired, EqualTo, ValidationError
+from wtforms.validators import DataRequired, EqualTo, ValidationError, Email
 from tables import db_session
 from tables.user import User
 
@@ -22,6 +22,6 @@ class RegisterForm(FlaskForm):
                                         DataRequired(required),
                                         EqualTo('password', message="Пароли должны совпадать")]
                                     )
-    name = StringField('Имя', [DataRequired(required), InputRequired()])
+    name = StringField('Имя', [DataRequired(required)])
     surname = StringField("Фамилия", [DataRequired(required)])
     submit = SubmitField('Войти')

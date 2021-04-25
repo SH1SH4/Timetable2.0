@@ -19,9 +19,6 @@ class TableListResource(Resource):
             user = db_sess.query(User).filter(User.token == token)[0]
             start = dt.strptime(data['start'], "%d-%m-%Y").date()
             end = dt.strptime(data['end'], "%d-%m-%Y").date()
-            print(user)
-            print(start)
-            print(end)
             assert user
 
         except AssertionError:
