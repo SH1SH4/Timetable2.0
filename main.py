@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, url_for, request, redirect, abort, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_restful import Api
@@ -249,4 +251,5 @@ def logout():
 
 if __name__ == "__main__":
     db_session.global_init('db/db.db')
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
