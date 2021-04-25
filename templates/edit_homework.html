@@ -15,7 +15,7 @@
     </div>
     <div class="mb-3">
         <label for="formFile" class="form-label">Прикрепить изображение</label>
-        {{ form.file(class="form-control", type="file") }}
+        {{ form.file(class="form-control", type="file", accept="image/jpeg,image/png,image") }}
     </div>
     <div class="button_post">
         {{ form.submit(type="submit", class="btn btn-dark") }}

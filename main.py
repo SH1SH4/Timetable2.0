@@ -7,6 +7,7 @@ from forms.register import RegisterForm
 from modules.homework import homework_form
 from forms.checkout import CheckoutForm
 from modules.registration import reg
+from modules.edit_homework import homework_edit
 from modules.api import TableResource
 from modules.login import login
 from tables.user import User, Tables, Image
@@ -119,7 +120,9 @@ def edit(id):
             record = db_sess.query(Tables).get(id)
             return render_template("edit_homework.html", title="Редактирование", form=form, table=record)
         if request.method == "POST":
-            render_template("")
+            record = db_sess.query(Tables).get(id)
+            homework_edit(form, record, current_user)
+            return redirect(f"/school_schedule/{id}")
 
 
 @app.route("/school_schedule", methods=["GET", "POST"])

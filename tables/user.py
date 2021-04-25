@@ -1,7 +1,6 @@
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Boolean, Time, Date
 from sqlalchemy.orm import validates, relationship
-from datetime import datetime
 from .db_session import SqlAlchemyBase
 
 
