@@ -45,6 +45,7 @@ class Tables(SqlAlchemyBase):
         #     response['homework_img'] = f"/picture/{self.homework_img[0].hash}"
         # Пикчи в Апиху обязательно когда-нибудь будут добавлены, правда-правда
 
+
 class Image(SqlAlchemyBase):
     __tablename__ = 'images'
     id = Column(Integer, primary_key=True, unique=True)

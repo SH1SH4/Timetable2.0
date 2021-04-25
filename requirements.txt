@@ -6,3 +6,4 @@ flask_login
 jsonschema
 pillow
 flask_uploads
+python-telegram-bot
