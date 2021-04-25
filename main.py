@@ -52,7 +52,7 @@ def user():
                 title="Личный кабинет",
                 user=current_user)
     else:
-        return redirect("/registration")
+        return redirect("/")
 
 
 @app.route('/calendar', methods=["POST", "GET"])
@@ -95,14 +95,13 @@ def picture(hash):
         if pic:
             user_id = str(current_user.id)
             return f'''<p><img src="{url_for('static',
-                filename='images' + '/' + user_id + '/' + pic.hash)}"
+                                             filename='images' + '/' + user_id + '/' + pic.hash)}"
 style="margin: 2rem; width: 100%;"
                                 class="rounded mx-auto d-block">'''
         else:
             abort(404)
     else:
-        return redirect("/registration")
-
+        return redirect("/")
 
 
 @app.route("/homework", methods=["POST", "GET"])
@@ -115,7 +114,7 @@ def homework():
             homework_form(form, current_user)
             return redirect('/')
     else:
-        return redirect("/registration")
+        return redirect("/")
 
 
 @app.route("/edit/<id>", methods=["GET", "POST"])
@@ -163,7 +162,7 @@ def school_schedule():
                 )
             )
     else:
-        return redirect("/registration")
+        return redirect("/")
 
 
 @app.route("/archive", methods=["GET", "POST"])
@@ -181,7 +180,7 @@ def archive():
                 table=list(current_user.table.filter(Tables.completed == True))
             )
     else:
-        return redirect("/registration")
+        return redirect("/")
 
 
 @app.route("/school_schedule/<int:number>", methods=["GET", "POST"])
@@ -214,7 +213,7 @@ def school_schedule_num(number):
                 db_sess.commit()
                 return render_template("text_archive.html", title="Добавлено в архив")
     else:
-        return redirect("/registration")
+        return redirect("/")
 
 
 @app.route('/registration', methods=["POST", "GET"])
@@ -250,4 +249,4 @@ def logout():
 
 if __name__ == "__main__":
     db_session.global_init('db/db.db')
-    app.run(port=8080, debug=True)
+    app.run(port=8080)
