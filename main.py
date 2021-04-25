@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask, render_template, url_for, request, redirect, abort, jsonify
 from flask_login import LoginManager, login_required, logout_user, current_user
 from flask_restful import Api
@@ -73,7 +74,7 @@ def json_timetable():
         result = []
         db_sess = db_session.create_session()
         for obj in db_sess.query(Tables).filter(Tables.day.between(start, end)):
-            print(obj.day, obj.time)
+            print(type(obj.day))
             a = {
                 'title': f' - {obj.title}',
                 'start': f"{obj.day}T{obj.time}",
@@ -260,4 +261,4 @@ if __name__ == "__main__":
     db_session.global_init('db/db.db')
     # port = int(os.environ.get("PORT", 5000))
     # app.run(host='0.0.0.0', port=port)
-    app.run()
+    app.run(host='127.0.0.1', port=8080, debug=True)

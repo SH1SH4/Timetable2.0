@@ -14,6 +14,8 @@ class User(SqlAlchemyBase, UserMixin):
     password = Column(String, nullable=False)
     token = Column(String, nullable=False, unique=True)
     connection = Column(String, nullable=True)
+    is_admin = Column(Boolean, default=False)
+    is_ban = Column(Boolean, default=False)
     table = relationship("Tables",
                          order_by='Tables.day, Tables.time',
                          lazy='dynamic')
