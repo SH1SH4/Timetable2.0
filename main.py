@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, url_for, request, redirect, abort, jsonify
+from flask import Flask, render_template, url_for, request, redirect, abort, jsonify, send_file
 from flask_login import LoginManager, login_required, logout_user, current_user
 from flask_restful import Api
 from forms.login import LoginForm
@@ -99,7 +99,8 @@ def json_timetable():
         end = request.args.get('end')
         result = []
         db_sess = db_session.create_session()
-        for obj in db_sess.query(Tables).filter(Tables.day.between(start, end), Tables.owner_id == current_user.id):
+        for obj in db_sess.query(Tables).filter(Tables.day.between(start, end),
+                                                Tables.owner_id == current_user.id):
             print(type(obj.day))
             a = {
                 'title': f' - {obj.title}',
@@ -125,10 +126,8 @@ def picture(hash):
         pic = pics.filter(Image.hash == hash)[0]
         if pic:
             user_id = str(current_user.id)
-            return f'''<p><img src="{url_for('static',
-                                             filename='images' + '/' + user_id + '/' + pic.hash)}"
-style="margin: 2rem; width: 100%;"
-                                class="rounded mx-auto d-block">'''
+            return send_file('static/images/' + user_id + '/' + pic.hash,
+                             mimetype='image')
         else:
             abort(404)
     else:
