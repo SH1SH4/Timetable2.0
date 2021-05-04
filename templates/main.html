@@ -54,20 +54,6 @@
         </div>
     </div>
 </header>
-{% else %}
-
-<header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-    <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-        <svg class="bi me-2" width="40" height="32">
-            <use xlink:href="#bootstrap"></use>
-        </svg>
-    </a>
-
-    <div class="col-md-3 text-end">
-        <a type="button" class="btn px-2    btn-outline-primary me-2" href="/login">Login</a>
-        <a type="button" class="btn px-2 btn-primary" href="/registration">Sign-up</a>
-    </div>
-</header>
 {% endif %}
 <main role="main" class="container">
     {% block content %}{% endblock %}

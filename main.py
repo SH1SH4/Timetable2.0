@@ -256,15 +256,14 @@ def registration():
     if current_user.is_authenticated:
         return redirect("/user")
     form = RegisterForm()
-    if request.method == "GET":
-        return render_template('registration.html', form=form)
-    if request.method == "POST":
+    if form.validate_on_submit():
         db_sess = db_session.create_session()
         count = len(list(db_sess.query(User).filter(User.email == form.email.data)))
         db_sess.close()
         reg(form)
         login(form.email.data, form.password.data)
-        return redirect('/user')
+        return redirect('/')
+    return render_template('registration.html', form=form)
 
 
 @app.route("/login", methods=["POST", "GET"])
