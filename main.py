@@ -119,136 +119,126 @@ def json_timetable():
 
 
 @app.route('/picture/<hash>')
+@login_required
 def picture(hash):
-    if current_user.is_authenticated:
-        pics = current_user.images
-        pic = pics.filter(Image.hash == hash)[0]
-        if pic:
-            user_id = str(current_user.id)
-            return f'''<p><img src="{url_for('static',
-                                             filename='images' + '/' + user_id + '/' + pic.hash)}"
+    pics = current_user.images
+    pic = pics.filter(Image.hash == hash)[0]
+    if pic:
+        user_id = str(current_user.id)
+        return f'''<p><img src="{url_for('static',
+                                         filename='images' + '/' + user_id + '/' + pic.hash)}"
 style="margin: 2rem; width: 100%;"
-                                class="rounded mx-auto d-block">'''
-        else:
-            abort(404)
+                            class="rounded mx-auto d-block">'''
     else:
-        return redirect("/")
+        abort(404)
 
 
 @app.route("/homework", methods=["POST", "GET"])
+@login_required
 def homework():
     form = HomeworkForm()
-    if current_user.is_authenticated:
-        if request.method == "GET":
-            return render_template('add_homework.html', title="Запись", form=form)
-        if request.method == "POST":
-            homework_form(form, current_user)
-            return redirect('/homework')
-    else:
-        return redirect("/")
+    if request.method == "GET":
+        return render_template('add_homework.html', title="Запись", form=form)
+    if request.method == "POST":
+        homework_form(form, current_user)
+        return redirect('/homework')
 
 
 @app.route("/edit/<id>", methods=["GET", "POST"])
+@login_required
 def edit(id):
-    if current_user.is_authenticated:
-        db_sess = db_session.create_session()
-        form = HomeworkForm()
-        table = db_sess.query(Tables).get(id)
-        if table and table.owner_id == current_user.id:
-            if request.method == "GET":
-                record = table
-                return render_template("edit_homework.html", title="Редактирование", form=form,
-                                       table=record)
-            if request.method == "POST":
-                record = db_sess.query(Tables).get(id)
-                homework_edit(form, record, current_user)
-                return redirect(f"/school_schedule/{id}")
-        abort(403)
+    db_sess = db_session.create_session()
+    form = HomeworkForm()
+    table = db_sess.query(Tables).get(id)
+    if table and table.owner_id == current_user.id:
+        if request.method == "GET":
+            record = table
+            return render_template("edit_homework.html", title="Редактирование", form=form,
+                                   table=record)
+        if request.method == "POST":
+            record = db_sess.query(Tables).get(id)
+            homework_edit(form, record, current_user)
+            return redirect(f"/school_schedule/{id}")
+    abort(403)
 
 
 @app.route("/school_schedule", methods=["GET", "POST"])
+@login_required
 def school_schedule():
     form = CheckoutForm()
     n = int(request.args.get('num', 1))
-    if current_user.is_authenticated:
-        if request.method == "GET":
-            return render_template(
-                "school_schedule.html",
-                title="Расписание",
-                form=form,
-                n=n,
-                user=current_user,
-                table=list(current_user.table.filter(Tables.completed == False))
+    if request.method == "GET":
+        return render_template(
+            "school_schedule.html",
+            title="Расписание",
+            form=form,
+            n=n,
+            user=current_user,
+            table=list(current_user.table.filter(Tables.completed == False))
+        )
+    if request.method == "POST":
+        db_sess = db_session.create_session()
+        record = current_user.table.filter(Tables.id == form.id.data)[0]
+        record.completed = True
+        db_sess.commit()
+        return render_template(
+            "school_schedule.html",
+            title="Расписание",
+            user=current_user,
+            n=n,
+            form=form,
+            table=list(current_user.table.filter(
+                Tables.completed == False,
+                Tables.active == True)
             )
-        if request.method == "POST":
-            db_sess = db_session.create_session()
-            record = current_user.table.filter(Tables.id == form.id.data)[0]
-            record.completed = True
-            db_sess.commit()
-            return render_template(
-                "school_schedule.html",
-                title="Расписание",
-                user=current_user,
-                n=n,
-                form=form,
-                table=list(current_user.table.filter(
-                    Tables.completed == False,
-                    Tables.active == True)
-                )
             )
-    else:
-        return redirect("/")
 
 
 @app.route("/archive", methods=["GET", "POST"])
+@login_required
 def archive():
     form = CheckoutForm()
     n = int(request.args.get('num', 1))
-    if current_user.is_authenticated:
-        if request.method == "GET":
-            return render_template(
-                "archive.html",
-                title="Расписание",
-                form=form,
-                n=n,
-                user=current_user,
-                table=list(current_user.table.filter(Tables.completed == True))
-            )
-    else:
-        return redirect("/")
+    if request.method == "GET":
+        return render_template(
+            "archive.html",
+            title="Расписание",
+            form=form,
+            n=n,
+            user=current_user,
+            table=list(current_user.table.filter(Tables.completed == True))
+        )
 
 
 @app.route("/school_schedule/<int:number>", methods=["GET", "POST"])
+@login_required
 def school_schedule_num(number):
-    if current_user.is_authenticated:
-        form = CheckoutForm()
-        db_sess = db_session.create_session()
-        if request.method == "GET":
+    form = CheckoutForm()
+    db_sess = db_session.create_session()
+    if request.method == "GET":
+        table = db_sess.query(Tables).get(number)
+        if not table:
+            abort(404)
+        elif table.owner_id == current_user.id:
+            return render_template(
+                "homework.html",
+                title=table.title,
+                user=current_user,
+                table=table,
+                form=form)
+        else:
+            abort(403)
+    if request.method == "POST":
+        if form.id.data == "delete":
             table = db_sess.query(Tables).get(number)
-            if not table:
-                abort(404)
-            elif table.owner_id == current_user.id:
-                return render_template(
-                    "homework.html",
-                    title=table.title,
-                    user=current_user,
-                    table=table,
-                    form=form)
-            else:
-                abort(403)
-        if request.method == "POST":
-            if form.id.data == "delete":
-                table = db_sess.query(Tables).get(number)
-                db_sess.delete(table)
-                db_sess.commit()
-                return render_template("delete.html", title="Запись удалена")
-            if form.id.data == "hide":
-                table = db_sess.query(Tables).get(number)
-                table.completed = True
-                db_sess.commit()
-                return render_template("text_archive.html", title="Добавлено в архив")
-    else:
-        return redirect("/")
+            db_sess.delete(table)
+            db_sess.commit()
+            return render_template("delete.html", title="Запись удалена")
+        if form.id.data == "hide":
+            table = db_sess.query(Tables).get(number)
+            table.completed = True
+            db_sess.commit()
+            return render_template("text_archive.html", title="Добавлено в архив")
 
 
 @app.route('/registration', methods=["POST", "GET"])
