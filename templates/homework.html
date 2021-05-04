@@ -17,7 +17,7 @@
                 <img src="{{ url_for('static', filename='images' + '/' +  table.owner_id|string + '/' + i.hash) }}"
                      style="margin: 2rem; width: 90%;"
                      class="rounded mx-auto d-block">
-                <a href="/picture/{{ i.hash }}" class="badge badge-info">Оригинальное изображение</a>
+                <a href="/picture/{{ i.hash }}" target="_blank" class="badge badge-info">Оригинальное изображение</a>
                 {% endfor %}
             </div>
         </div>
