@@ -1,26 +1,30 @@
-import os
+from os import environ as env
 
 from flask import Flask, render_template, url_for, request, redirect, abort, jsonify, send_file
 from flask_login import LoginManager, login_required, logout_user, current_user
 from flask_restful import Api
+from flask_sqlalchemy import SQLAlchemy
+
 from forms.login import LoginForm
 from forms.homework import HomeworkForm
 from forms.register import RegisterForm
-from modules.homework import homework_form
 from forms.checkout import CheckoutForm
+
+from modules.homework import homework_form
 from modules.registration import reg
 from modules.edit_homework import homework_edit
 from modules.api import TableResource, TableListResource
 from modules.login import login
+
 from tables.user import User, Tables, Image
 from tables import db_session
+
 from secrets import token_urlsafe
-from threading import Thread
-import bot
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '123456789qwerty'
+app.config['SECRET_KEY'] = env.get('SECRET_KEY')
 api = Api(app)
+db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -244,9 +248,6 @@ def registration():
         return redirect("/user")
     form = RegisterForm()
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        count = len(list(db_sess.query(User).filter(User.email == form.email.data)))
-        db_sess.close()
         reg(form)
         login(form.email.data, form.password.data)
         return redirect('/')
@@ -276,7 +277,7 @@ def logout():
 
 
 if __name__ == "__main__":
-    db_session.global_init('db/db.db')
+    db_session.global_init()
     # port = int(os.environ.get("PORT", 5000))
     # app.run(host='0.0.0.0', port=port)
     app.run(host='127.0.0.1', port=8080, debug=True)

@@ -1,19 +1,20 @@
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, Boolean, Time, Date
 from sqlalchemy.orm import relationship
-from .db_session import SqlAlchemyBase
+from sqlalchemy.ext.declarative import declarative_base
+from .db_session import DeclarativeBase
 
 
-class User(SqlAlchemyBase, UserMixin):
+class User(DeclarativeBase, UserMixin):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, unique=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    surname = Column(String, nullable=False)
-    email = Column(String, nullable=False)
-    password = Column(String, nullable=False)
-    token = Column(String, nullable=False, unique=True)
-    connection = Column(String, nullable=True)
+    name = Column(String(64), nullable=False)
+    surname = Column(String(64), nullable=False)
+    email = Column(String(128), nullable=False)
+    password = Column(String(64), nullable=False)
+    token = Column(String(128), nullable=False, unique=True)
+    connection = Column(String(64), nullable=True)
     is_admin = Column(Boolean, default=False)
     is_ban = Column(Boolean, default=False)
     table = relationship("Tables",
@@ -23,14 +24,14 @@ class User(SqlAlchemyBase, UserMixin):
     # lessons = relationship("Lessons")
 
 
-class Tables(SqlAlchemyBase):
+class Tables(DeclarativeBase):
     __tablename__ = 'homework'
     id = Column(Integer, primary_key=True, unique=True)
     owner_id = Column(Integer, ForeignKey('users.id'))
     day = Column(Date, nullable=False)
     time = Column(Time, nullable=False)
-    title = Column(String, nullable=False)
-    homework_text = Column(Text, nullable=True)  # Вы спросите, почему Homework_text а не просто text.
+    title = Column(String(64), nullable=False)
+    homework_text = Column(Text(1024), nullable=True)  # Вы спросите, почему Homework_text а не просто text.
     homework_img = relationship('Image')  # Ответ прост - мы тупые
     completed = Column(Boolean, default=False)
     active = Column(Boolean, default=True)
@@ -49,9 +50,9 @@ class Tables(SqlAlchemyBase):
         return response
 
 
-class Image(SqlAlchemyBase):
+class Image(DeclarativeBase):
     __tablename__ = 'images'
     id = Column(Integer, primary_key=True, unique=True)
     owner_id = Column(Integer, ForeignKey('users.id'))
     parent_table = Column(Integer, ForeignKey('homework.id'))
-    hash = Column(String, unique=True)
+    hash = Column(String(128), unique=True)

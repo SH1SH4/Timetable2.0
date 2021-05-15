@@ -1,33 +1,32 @@
 import sqlalchemy as sa
-import sqlalchemy.orm as orm
-from sqlalchemy.orm import Session
-import sqlalchemy.ext.declarative as dec
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from os import environ as env
 
-SqlAlchemyBase = dec.declarative_base()
+
+DeclarativeBase = declarative_base()
 __factory = None
 
 
-def global_init(db_file):
+DRIVERNAME = env.get('DRIVERNAME')
+HOST = env.get('HOST')
+PORT = env.get('PORT')
+USERNAME = env.get('USERNAME')
+PASSWORD = env.get('PASSWORD')
+DATABASE = env.get('DATABASE')
+
+
+def global_init():
     global __factory
 
     if __factory:
         return
 
-    if not db_file or not db_file.strip():
-        raise Exception("Необходимо указать файл базы данных.")
-
-    conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
-    print(f"Подключение к базе данных по адресу {conn_str}")
-
-    engine = sa.create_engine(conn_str, echo=False)
-    sess = orm.sessionmaker(bind=engine)
-    __factory = orm.scoped_session(sess)
-
-    from . import __all_models
-
-    SqlAlchemyBase.metadata.create_all(engine)
+    engine = sa.create_engine(f'{DRIVERNAME}://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?charset=utf8mb4')
+    __factory = sessionmaker(bind=engine)
+    DeclarativeBase.metadata.create_all(engine)
 
 
-def create_session() -> Session:
+def create_session():
     global __factory
     return __factory()

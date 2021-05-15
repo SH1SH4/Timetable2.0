@@ -48,7 +48,7 @@ class TableListResource(Resource):
 
 class TableResource(Resource):
     def post(self):
-        db_sess = db_session.create_session()
+        db = db_session.create_session()
         try:
             data = loads(request.get_data())
             validate(instance=data,

@@ -8,3 +8,4 @@ pillow
 flask_uploads
 python-telegram-bot
 Alembic
+python-dotenv
