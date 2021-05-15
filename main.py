@@ -1,4 +1,6 @@
 from os import environ as env
+from os import path
+from dotenv import get_key
 
 from flask import Flask, render_template, url_for, request, redirect, abort, jsonify, send_file
 from flask_login import LoginManager, login_required, logout_user, current_user
@@ -21,8 +23,12 @@ from tables import db_session
 from secrets import token_urlsafe
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = env.get('SECRET_KEY')
 api = Api(app)
+dotenv_path = path.join(path.dirname(__file__), '.env')
+if path.exists(dotenv_path):
+    app.config['SECRET_KEY'] = get_key(dotenv_path, 'CSRF_SECRET')
+else:
+    app.config['SECRET_KEY'] = env.get('CSRF_SECRET')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -275,7 +281,14 @@ def logout():
 
 
 if __name__ == "__main__":
+    dotenv_path = path.join(path.dirname(__file__), '.env')
+    print(dotenv_path)
+    if path.exists(dotenv_path):
+        PORT = int(get_key(dotenv_path, 'PORT'))
+        HOST = '127.0.0.1'
+    else:
+        PORT = int(env.get('PORT'))
+        HOST = '0.0.0.0'
     db_session.global_init()
-    port = int(env.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host=HOST, port=PORT)
     # app.run(host='127.0.0.1', port=8080, debug=True)

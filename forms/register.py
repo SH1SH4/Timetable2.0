@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from .CSRF import MyBaseForm
 from wtforms import PasswordField, StringField, SubmitField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, EqualTo, ValidationError, Email
@@ -15,7 +15,7 @@ def validate_email(form, field):
         raise ValidationError('Аккаунт с таким email уже существует')
 
 
-class RegisterForm(FlaskForm):
+class RegisterForm(MyBaseForm):
     email = EmailField('Почта', [DataRequired(required), validate_email])
     password = PasswordField('Пароль', [DataRequired(required)])
     password_repeat = PasswordField('Повторите пароль', [
