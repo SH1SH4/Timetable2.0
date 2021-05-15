@@ -10,7 +10,7 @@ __factory = None
 
 DRIVERNAME = env.get('DRIVERNAME')
 HOST = env.get('HOST')
-PORT = env.get('PORT')
+PORT = int(env.get('PORT'))
 USERNAME = env.get('USERNAME')
 PASSWORD = env.get('PASSWORD')
 DATABASE = env.get('DATABASE')

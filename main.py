@@ -3,7 +3,6 @@ from os import environ as env
 from flask import Flask, render_template, url_for, request, redirect, abort, jsonify, send_file
 from flask_login import LoginManager, login_required, logout_user, current_user
 from flask_restful import Api
-from flask_sqlalchemy import SQLAlchemy
 
 from forms.login import LoginForm
 from forms.homework import HomeworkForm
@@ -24,7 +23,6 @@ from secrets import token_urlsafe
 app = Flask(__name__)
 app.config['SECRET_KEY'] = env.get('SECRET_KEY')
 api = Api(app)
-db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
