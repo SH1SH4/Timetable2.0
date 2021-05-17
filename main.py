@@ -77,11 +77,15 @@ def admin():
 def user():
     if current_user.is_authenticated:
         new_token = int(request.args.get('token', 0))
+        print(new_token)
         if new_token:
             db_sess = db_session.create_session()
-            current_user.connection = None
-            current_user.token = token_urlsafe(16)
+            user = db_sess.query(User).get(current_user.id)
+            print(user.token)
+            user.connection = None
+            user.token = token_urlsafe(16)
             db_sess.commit()
+            print(current_user.token)
             return redirect("/user")
         else:
             return render_template(
@@ -286,9 +290,11 @@ if __name__ == "__main__":
     if path.exists(dotenv_path):
         PORT = int(get_key(dotenv_path, 'PORT'))
         HOST = '127.0.0.1'
+        debug = True
     else:
         PORT = int(env.get('PORT'))
         HOST = '0.0.0.0'
+        debug = False
     db_session.global_init()
-    app.run(host=HOST, port=PORT)
+    app.run(host=HOST, port=PORT, debug=debug)
     # app.run(host='127.0.0.1', port=8080, debug=True)
