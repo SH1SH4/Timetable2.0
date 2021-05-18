@@ -64,10 +64,12 @@ def admin():
                 new_admin = db_sess.query(User).get(admin)
                 new_admin.is_admin = not new_admin.is_admin
                 db_sess.commit()
+                db_sess.close()
             elif ban:
                 banned = db_sess.query(User).get(ban)
                 banned.is_ban = not banned.is_ban
                 db_sess.commit()
+                db_sess.close()
             users = list(db_sess.query(User))
             return render_template("admin.html", admin=current_user, users=users, n=n)
     return render_template('welcome.html')
@@ -144,6 +146,7 @@ def picture(hash):
 
 
 @app.route("/homework", methods=["POST", "GET"])
+@login_required
 def homework():
     form = HomeworkForm()
     if request.method == "GET":
@@ -187,16 +190,17 @@ def school_schedule():
         )
     if request.method == "POST":
         db_sess = db_session.create_session()
-        record = current_user.table.filter(Tables.id == form.id.data)[0]
+        user = db_sess.query(User).get(current_user.id)
+        record = user.table.filter(Tables.id == form.id.data)[0]
         record.completed = True
         db_sess.commit()
         return render_template(
             "school_schedule.html",
             title="Расписание",
-            user=current_user,
+            user=user,
             n=n,
             form=form,
-            table=list(current_user.table.filter(
+            table=list(user.table.filter(
                 Tables.completed == False,
                 Tables.active == True)
             )
@@ -289,7 +293,7 @@ if __name__ == "__main__":
     print(dotenv_path)
     if path.exists(dotenv_path):
         PORT = int(get_key(dotenv_path, 'PORT'))
-        HOST = '127.0.0.1'
+        HOST = '0.0.0.0'
         debug = True
     else:
         PORT = int(env.get('PORT'))

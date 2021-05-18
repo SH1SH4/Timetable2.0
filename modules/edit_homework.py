@@ -17,6 +17,7 @@ def load_img(f, user, table, db_sess):
     f.save(path.join('static', 'images', str(user), filename))
     db_sess.add(img)
     db_sess.commit()
+    db_sess.close()
 
 
 def homework_edit(form, record, user):
