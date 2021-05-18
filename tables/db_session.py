@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from os import environ as env
 from os import path
@@ -27,7 +27,8 @@ def global_init():
         return
     print(f'{DRIVERNAME}://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?charset=utf8mb4')
     engine = sa.create_engine(f'{DRIVERNAME}://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?charset=utf8mb4')
-    __factory = sessionmaker(bind=engine)
+    sess = sessionmaker(bind=engine)
+    __factory = scoped_session(sess)
     DeclarativeBase.metadata.create_all(engine)
 
 

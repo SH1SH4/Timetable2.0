@@ -133,14 +133,13 @@ def json_timetable():
 
 
 @app.route('/picture/<hash>')
-@login_required
 def picture(hash):
-        pics = current_user.images
-        pic = pics.filter(Image.hash == hash)[0]
+        db_sess = db_session.create_session()
+        pic = db_sess.query(Image).filter(Image.hash == hash)[0]
+
         if pic:
-            user_id = str(current_user.id)
-            return send_file('static/images/' + user_id + '/' + pic.hash,
-                             mimetype='image')
+            return send_file('static/images/' + str(pic.owner_id) + '/' + pic.hash,
+                             mimetype='image/jpg')
         else:
             abort(404)
 
