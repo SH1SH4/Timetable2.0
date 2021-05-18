@@ -99,6 +99,7 @@ def user():
 
 
 @app.route('/calendar', methods=["POST", "GET"])
+@login_required
 def timetable():
     if request.method == "GET":
         return render_template('calendar.html')
