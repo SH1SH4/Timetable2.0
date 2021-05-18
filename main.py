@@ -53,47 +53,42 @@ def index():
 
 
 @app.route('/admin')
+@login_required
 def admin():
-    if current_user.is_authenticated:
-        if current_user.is_admin:
-            db_sess = db_session.create_session()
-            n = int(request.args.get('page', 1))
-            admin = int(request.args.get('admin', 0))
-            ban = int(request.args.get('ban', 0))
-            if admin:
-                new_admin = db_sess.query(User).get(admin)
-                new_admin.is_admin = not new_admin.is_admin
-                db_sess.commit()
-            elif ban:
-                banned = db_sess.query(User).get(ban)
-                banned.is_ban = not banned.is_ban
-                db_sess.commit()
-            users = list(db_sess.query(User))
-            return render_template("admin.html", admin=current_user, users=users, n=n)
-    return render_template('welcome.html')
+    if current_user.is_admin:
+        db_sess = db_session.create_session()
+        n = int(request.args.get('page', 1))
+        admin = int(request.args.get('admin', 0))
+        ban = int(request.args.get('ban', 0))
+        if admin:
+            new_admin = db_sess.query(User).get(admin)
+            new_admin.is_admin = not new_admin.is_admin
+            db_sess.commit()
+        elif ban:
+            banned = db_sess.query(User).get(ban)
+            banned.is_ban = not banned.is_ban
+            db_sess.commit()
+        users = list(db_sess.query(User))
+        return render_template("admin.html", admin=current_user, users=users, n=n)
 
 
 @app.route("/user")
+@login_required
 def user():
-    if current_user.is_authenticated:
-        new_token = int(request.args.get('token', 0))
-        print(new_token)
-        if new_token:
-            db_sess = db_session.create_session()
-            user = db_sess.query(User).get(current_user.id)
-            print(user.token)
-            user.connection = None
-            user.token = token_urlsafe(16)
-            db_sess.commit()
-            print(current_user.token)
-            return redirect("/user")
-        else:
-            return render_template(
-                "user_cabinet.html",
-                title="Личный кабинет",
-                user=current_user)
+    new_token = int(request.args.get('token', 0))
+    print(new_token)
+    if new_token:
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).get(current_user.id)
+        user.connection = None
+        user.token = token_urlsafe(16)
+        db_sess.commit()
+        return redirect("/user")
     else:
-        return redirect("/")
+        return render_template(
+            "user_cabinet.html",
+            title="Личный кабинет",
+            user=current_user)
 
 
 @app.route('/calendar', methods=["POST", "GET"])
@@ -150,8 +145,11 @@ def homework():
     if request.method == "GET":
         return render_template('add_homework.html', title="Запись", form=form)
     if request.method == "POST":
-        homework_form(form, current_user)
-        return redirect('/homework')
+        if form.validate_on_submit():
+            homework_form(form, current_user)
+            return redirect('/homework')
+        else:
+            return redirect('/homework', form=form)
 
 
 @app.route("/edit/<id>", methods=["GET", "POST"])
