@@ -64,12 +64,10 @@ def admin():
                 new_admin = db_sess.query(User).get(admin)
                 new_admin.is_admin = not new_admin.is_admin
                 db_sess.commit()
-                db_sess.close()
             elif ban:
                 banned = db_sess.query(User).get(ban)
                 banned.is_ban = not banned.is_ban
                 db_sess.commit()
-                db_sess.close()
             users = list(db_sess.query(User))
             return render_template("admin.html", admin=current_user, users=users, n=n)
     return render_template('welcome.html')
