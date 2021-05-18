@@ -15,7 +15,7 @@ if path.exists(dotenv_path):
 DRIVERNAME = env.get('DB_DRIVERNAME')
 HOST = env.get('DB_HOST')
 PORT = int(env.get('DB_PORT'))
-USERNAME = env.get('USERNAME')
+USERNAME = env.get('USER')
 PASSWORD = env.get('PASSWORD')
 DATABASE = env.get('DB')
 
