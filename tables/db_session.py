@@ -26,7 +26,7 @@ def global_init():
     if __factory:
         return
     print(f'{DRIVERNAME}://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?charset=utf8mb4')
-    engine = sa.create_engine(f'{DRIVERNAME}://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?charset=utf8mb4')
+    engine = sa.create_engine(f'{DRIVERNAME}://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?charset=utf8mb4', pool_size=50, max_overflow=0)
     sess = sessionmaker(bind=engine)
     __factory = scoped_session(sess)
     DeclarativeBase.metadata.create_all(engine)
